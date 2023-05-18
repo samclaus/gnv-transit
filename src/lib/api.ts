@@ -366,3 +366,150 @@ export async function getPatternsForRoute(
     const url = _makeFullURL("getpatterns", { rt: routeID });
     return (await getBusTimeResponse<GetPatternsResponse>(url)).ptr;
 }
+
+/**
+ * A prediction is an estimate of when a particular vehicle will arrive at or
+ * depart from a particular stop.
+ */
+export interface PredictionInfo {
+    /** Date/time (local) the prediction was GENERATED. */
+    tmstmp: string;
+    /**
+     * Type of prediction: "A" for arrival, "D" for departure. Departure predictions
+     * are usually only available at the endpoints of a route, and other spots where
+     * vehicles are scheduled to depart at an exact time.
+     */
+    typ: "A" | "D";
+    /** ID of the stop this prediction was generated for. */
+    stpid: string;
+    /** Human-readable name of the stop this prediction was generated for. */
+    stpnm: string;
+    /** ID of the vehicle this prediction was generated for. */
+    vid: number;
+    /**
+     * "Distance to SToP": the linear distance, in feet, that the vehicle has left
+     * before it reaches the stop.
+     */
+    dstp: number;
+    /** ID of the route the vehicle is traveling. */
+    rt: string;
+    /** Language-specific designator for the route the vehicle is traveling. */
+    rtdd: string;
+    /** ID of the direction the vehicle is traveling. */
+    rtdir: string;
+    /** (TODO: Name?) of the final destination the vehicle is traveling to. */
+    des: string;
+    /** Predicted date/time (local) of the vehicle's arrival/departure. */
+    prdtm: string;
+    /** Is the vehicle delayed? */
+    dly: boolean;
+    /** The dynamic action type affecting this prediction. TODO: wtf are dynamic action types? */
+    dyn: number;
+    /**
+     * TA’s version of the scheduled block identifier for the work currently being
+     * performed by the vehicle.
+     */
+    tablockid: string;
+    /**
+     * TA’s version of the scheduled trip identifier for the vehicle’s current trip.
+     */
+    tatripid: string;
+    /** Trip ID defined by the TA scheduling system. */
+    origtatripno: string;
+    /**
+     * Remaining minutes before the vehicle arrives/departs. This is just useless and
+     * redundant compared to the predicted timestamp for arrival/departure.
+     * 
+     * Clients should really just compute the countdown locally.
+     */
+    prdctdn: number;
+    /** The zone name if the vehicle has entered a defined zones, otherwise blank. */
+    zone: string;
+    /**
+     * If this prediction is the last arrival (for this route) before a service gap,
+     * this represents the number of minutes until the next scheduled bus arrival
+     * (from the prediction time).
+     * 
+     * This only appears if the Transit Authority has the service gap feature enabled.
+     * If nbus would have a value less than the configured minimum gap of time (default
+     * 120 minutes), the element is empty. If nBus is “-1”, then this prediction is the
+     * last bus of the day for this route.
+     */
+    nbus?: string;
+    /**
+     * The current passenger load of the vehicle this prediction is for. Cut-offs for
+     * the different ratios are configured per BusTime deployment.
+     */
+    psgld: PassengerLoad;
+    /**
+     * GTFS stop sequence of the stop for which this prediction was generated. Only
+     * included if the BusTime property “developer.api.include.gtfsseq” is true.
+     */
+    gtfsseq?: number;
+    /**
+     * Contains the time (in seconds past midnight) of the scheduled start of the trip
+     * that the vehicle is currently performing.
+     */
+    stst?: number;
+    /**
+     * Contains the date (in “yyyy-mm-dd” format) of the scheduled start of the trip
+     * that the vehicle is currently performing.
+     */
+    stsd?: string;
+    /**
+     * An integer code representing the flag-stop information for the prediction.
+     * TODO: maybe create a TypeScript enum for this.
+     *
+     *  - -1 = UNDEFINED (no flag-stop information available)
+     *  - 0 = NORMAL (normal stop)
+     *  - 1 = PICKUP_AND_DISCHARGE (Flag stop for both pickup and discharge)
+     *  - 2 = ONLY_DISCHARGE (Flag stop for discharge only)
+     */
+    flagstop: -1 | 0 | 1;
+}
+
+interface GetPredictionsResponse {
+    prd: PredictionInfo[];
+}
+
+/**
+ * Get predictions for upcoming arrivals/departures of a set of vehicles.
+ */
+export async function getPredictionsForVehicles(
+    vehicleIDs: readonly string[],
+    timeResolution: "m" | "s" = "m",
+    maxPredictions = vehicleIDs.length * 3,
+): Promise<PredictionInfo[]> {
+    const url = _makeFullURL("getpredictions", {
+        vid: vehicleIDs.join(","),
+        tmres: timeResolution,
+        top: maxPredictions,
+    });
+    return (await getBusTimeResponse<GetPredictionsResponse>(url)).prd;
+}
+
+/**
+ * Get predictions for upcoming arrivals/departures at a set of stops. Optionally,
+ * pass a set of route IDs to only show predictions pertaining to those routes.
+ */
+export async function getPredictionsForStops(
+    stopIDs: readonly string[],
+    routeIDs?: readonly string[],
+    timeResolution: "m" | "s" = "m",
+    maxPredictions?: number,
+): Promise<PredictionInfo[]> {
+    const params: Dict<string | number> = {
+        stpid: stopIDs.join(","),
+        tmres: timeResolution,
+    };
+
+    if (routeIDs) {
+        params.rt = routeIDs.join(",");
+    }
+    if (typeof maxPredictions === "number") {
+        params.top = maxPredictions;
+    }
+
+    const url = _makeFullURL("getpredictions", params);
+    return (await getBusTimeResponse<GetPredictionsResponse>(url)).prd;
+}

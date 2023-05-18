@@ -1,0 +1,120 @@
+/*
+  This code is slightly modified from Josh Comeau's Custom CSS Reset:
+  https://www.joshwcomeau.com/css/custom-css-reset/
+*/
+
+/*
+    content-box is a bad relic from the old days of the internet. I have
+    never wanted to specify an element's content width without accounting
+    for padding and the border. In the case I ever do, it will be an
+    isolated case.
+*/
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+* {
+    /*
+        Take away all margins by default. Browsers all have their own inconsistent
+        defaults, so I'd rather play it safe and explicitly define my own margins
+        for headings, paragraphs, lists, etc. Besides, I definitely want to
+        explicitly define margins for each layout element, such as <header>, <nav>,
+        etc. Browser defaults could easily jank up a page for things like that.
+
+        NOTE: I did not include this on every ::before and ::after because some of
+        the built-in browser controls (say, for video elements) might use margins
+        and I don't want to mess those up accidentally. I might change my mind in
+        the future.
+    */
+    margin: 0;
+
+    /*
+        By default, ultra long words that take up more than one line by themself will
+        simply overflow their parent. This property allows such words to be broken
+        as necessary and split onto 2 or more lines.
+
+        TODO: in the future, I should investigate the 'hyphens' property, which will
+        allow the browser to insert hyphens where it breaks long words, but may also
+        make it substantially more aggressive when it comes to breaking, i.e., it
+        might break words even when not strictly necessary just to neatly fill out
+        lines (which wouldn't be ideal in my opinion).
+    */
+    overflow-wrap: break-word;
+}
+
+body {
+    /*
+        line-height is inherited by default. A unitless value here means every
+        element inside of the body, no matter how nested, will multiply its
+        own font-size by 1.5 to determine its line-height by default.
+
+        Most browsers have this exact rule by default, except they use a value
+        of 1.2 which is not really accessible to dyslexic people and, tbh, it's
+        not enough for MY eyes to easily switch between lines of text.
+    */
+    line-height: 1.5;
+
+    /*
+        Improve text rendering on MacOS. Pretty much all Mac devices these days
+        have retina displays, so subpixel antialiasing (the default for browsers
+        but NOT native Mac apps!) just makes text look chunkier and less sharp.
+        Use regular antialiasing instead.
+    */
+    -webkit-font-smoothing: antialiased;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+    /*
+        By default, most media elements are display: inline. This adds a bit of line
+        height (effectively some extra invisible margin) to them and can mess up all
+        sorts of stuff. I did not understand for YEARS why SVG-based icons were not
+        square even when I set their width and height to 24px. Thanks Josh!
+
+        Not to mention, I usually want all of these media elements to have a whole
+        line dedicated to them, rather than cramming as many possible horizontally.
+        It's very odd that they are inline by default--perhaps it is because people
+        would cram a ton of small images all over their sites in the bad old days
+        of the internet.
+    */
+    display: block;
+
+    /*
+        Unlike most elements, media elements with a larger intrinsic width than their
+        parent will overflow by default, regardless of display: block. Stop them from
+        doing that since it makes no sense for them to just disobey the usual rules
+        and break layouts!
+    */
+    max-width: 100%;
+}
+
+/*
+    By default, all/most of the built-in input elements have small font sizes and use
+    various font families. Just make them conform to the surrounding font values by
+    default.
+
+    This is incredibly important for mobile, where small browser-default font sizes will
+    cause the browser to automatically zoom in when focusing an input--that can be
+    jarring and obnoxious, especially because it doesn't zoom back out automatically
+    once you are done with the input.
+*/
+input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+/*
+    TODO: investigate whether I need to have a wrapper element around the main UI for web
+    applications to make modals/tooltips/etc. play nicely, or whether it will all be fine
+    since I will simply place the modal/tooltip/etc. containers after the main UI code.
+*/
+/* #app-root {
+    isolation: isolate;
+} */

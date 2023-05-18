@@ -513,3 +513,11 @@ export async function getPredictionsForStops(
     const url = _makeFullURL("getpredictions", params);
     return (await getBusTimeResponse<GetPredictionsResponse>(url)).prd;
 }
+
+// TODO: service bulletins
+
+// TODO: locale list
+
+// TODO: RTPI data feeds
+
+// TODO: agencies

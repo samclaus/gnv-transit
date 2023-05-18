@@ -520,4 +520,61 @@ export async function getPredictionsForStops(
 
 // TODO: RTPI data feeds
 
+export const enum DetourState {
+    Canceled,
+    Active,
+}
+
+/** Describes a single direction of a single route that is affected by a detour. */
+export interface DetouredRouteDirectionInfo {
+    /** ID of the affected route. */
+    rt: string;
+    /** ID of the affected direction along the route. */
+    dir: string;
+}
+
+export interface DetourInfo {
+    /** Unique ID for this detour. */
+    id: string;
+    /** Current version of the detour. Only latest version is returned from API. */
+    ver: number;
+    /** Current state of the detour. */
+    st: DetourState;
+    /** Human-readable description of the detour. */
+    desc: string;
+    /** Affected route directions. */
+    rtdirs: DetouredRouteDirectionInfo[];
+    /** Start date/time for this detour. */
+    startdt: string;
+    /** End date/time for this detour. */
+    enddt: string;
+    /** The feed this detour came from, if the system has multiple RTPI feeds. */
+    rtpidatafeed?: string;
+}
+
+/**
+ * Get the detours (if any) for a particular route. Optionally, pass a
+ * direction ID to only query detours for a particular direction along
+ * the route.
+ */
+export async function getDetours(
+    routeID: string,
+    directionID?: string,
+): Promise<DetourInfo[]> {
+    interface GetDetoursResponse {
+        dtrs: DetourInfo[];
+    }
+
+    const params: Dict<string> = {
+        rt: routeID,
+    };
+
+    if (typeof directionID === "string") {
+        params.rtdir = directionID;
+    }
+
+    const url = _makeFullURL("getdetours", params);
+    return (await getBusTimeResponse<GetDetoursResponse>(url)).dtrs;
+}
+
 // TODO: agencies

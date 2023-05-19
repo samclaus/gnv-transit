@@ -16,7 +16,7 @@ function _makeFullURL(
      */
     params: Readonly<Dict<boolean | number | string>>,
 ): string {
-    let url = `https://riderts.app/bustime/api/v3/${path}?key=${RTS_API_KEY}&format=json`;
+    let url = `http://localhost:8080/https://riderts.app/bustime/api/v3/${path}?key=${RTS_API_KEY}&format=json`;
 
     for (const [param, value] of Object.entries(params)) {
         url += `&${param}=${value}`;

@@ -1,9 +1,11 @@
 <script lang="ts">
     import { ROUTES, refreshRoutes } from "./lib/cache";
+    import { leaflet } from "./lib/leaflet.action";
 </script>
 
 <main>
     <h1>RTS Bus Tracker</h1>
+    <div class="map" use:leaflet></div>
     <button on:click={() => refreshRoutes()}>Refresh routes</button>
     <h2>{$ROUTES.length} Routes</h2>
     <div class="container">
@@ -23,6 +25,11 @@
 <style>
     main {
         padding: 0 16px;
+    }
+
+    .map {
+        height: 400px;
+        border-radius: 8px;
     }
 
     .container {

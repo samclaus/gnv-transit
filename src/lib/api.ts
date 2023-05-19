@@ -1,5 +1,5 @@
 
-const RTS_API_KEY = "FiTzUhjBRi8eUhqzZvvBBVemX";
+const RTS_API_KEY = import.meta.env.VITE_RTS_API_KEY;
 
 interface Dict<V> {
     [key: string]: V;

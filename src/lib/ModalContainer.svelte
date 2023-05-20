@@ -1,5 +1,6 @@
 <script lang="ts" context="module">
     import { get, writable } from "svelte/store";
+    import { slide } from "svelte/transition";
     import { Deferred } from "./async-util";
 
     /**
@@ -29,6 +30,10 @@
         return d.promise;
     }
 
+    export function fire(component: any, params: any): void {
+        show(component, params).catch(() => {});
+    }
+
     export function complete(result?: any): void {
         const modal = get(current);
 
@@ -54,7 +59,7 @@
         cancel();
     }
 
-    function onBackdropKeydown(ev: KeyboardEvent): void {
+    function onContainerKeydown(ev: KeyboardEvent): void {
         if (ev.key === "Escape") {
             ev.stopPropagation();
             cancel();
@@ -63,40 +68,70 @@
 </script>
 
 <div
-    class="modal-container"
-    class:visible={!!$current}
-    on:click={onBackdropClick}
-    on:keydown={onBackdropKeydown}>
+    class="container"
+    on:keydown={onContainerKeydown}>
+
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div
+        class="backdrop"
+        class:visible={!!$current}
+        on:click={onBackdropClick}
+    />
 
     {#if $current}
-        <dialog>
-            <svelte:component this={$current[0]} />
-        </dialog>
+        <div class="modal-scroller">
+            <dialog transition:slide open>
+                <svelte:component this={$current[0]} />
+            </dialog>
+        </div>
     {/if}
 
 </div>
 
 <style>
-    .modal-container {
+    .container {
         position: fixed;
+        inset: 0;
+        pointer-events: none;
+    }
+
+    .backdrop {
+        position: absolute;
         inset: 0;
 
         background-color: black;
-        opacity: 0;
 
-        transition: opacity 68ms ease-out;
+        opacity: 0;
+        transition: opacity 200ms ease-out;
         will-change: opacity;
     }
 
-    .modal-container.visible {
-        opacity: .3;
+    .backdrop.visible {
+        opacity: .5;
+        pointer-events: all;
+    }
+
+    .modal-scroller {
+        position: absolute;
+        inset: 0;
+        overflow: auto;
+        pointer-events: none;
     }
 
     dialog {
+        margin: 40px auto;
+
+        width: 48rem;
+        max-width: 100vw;
+
         padding: 0 12px;
 
         background-color: white;
         border: 1px solid rgb(0 0 0 / .12);
         border-radius: 8px;
+
+        will-change: opacity, transform;
+
+        pointer-events: all;
     }
 </style>

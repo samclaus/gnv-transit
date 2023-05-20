@@ -5,7 +5,7 @@ import { reuseInflight } from "./async-util";
 const ROUTES_STORAGE_KEY = "BusTime.routes";
 const ROUTES_MUT = writable<RouteInfo[]>(function() {
     try {
-        const routes = JSON.parse(localStorage.getItem(ROUTES_STORAGE_KEY));
+        const routes = JSON.parse(localStorage.getItem(ROUTES_STORAGE_KEY)!);
         return Array.isArray(routes) ? routes : [];
     } catch {
         return [];

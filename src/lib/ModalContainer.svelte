@@ -1,6 +1,7 @@
 <script lang="ts" context="module">
+    import { cubicOut } from "svelte/easing";
     import { get, writable } from "svelte/store";
-    import { slide } from "svelte/transition";
+    import { type TransitionConfig } from "svelte/transition";
     import { Deferred } from "./async-util";
 
     /**
@@ -51,6 +52,21 @@
             current.set(undefined);
         }
     }
+
+    function slideScaleFade(el: Node, {
+        delay = 0,
+        duration = 300,
+    } = {}): TransitionConfig {
+        return {
+            delay,
+            duration,
+            easing: cubicOut,
+            css: (t, u) => `
+                opacity: ${t};
+                transform: translateY(${50 * u}px) scale(${t});
+            `,
+        };
+    }
 </script>
 
 <script lang="ts">
@@ -80,7 +96,7 @@
 
     {#if $current}
         <div class="modal-scroller">
-            <dialog transition:slide open>
+            <dialog open transition:slideScaleFade>
                 <svelte:component this={$current[0]} />
             </dialog>
         </div>
@@ -119,9 +135,11 @@
     }
 
     dialog {
+        display: block;
+
         margin: 40px auto;
 
-        width: 48rem;
+        width: 40rem;
         max-width: 100vw;
 
         padding: 0 12px;
@@ -130,8 +148,10 @@
         border: 1px solid rgb(0 0 0 / .12);
         border-radius: 8px;
 
-        will-change: opacity, transform;
-
         pointer-events: all;
+        contain: inline-size layout style paint;
+
+        transform-origin: center;
+        will-change: opacity, transform;
     }
 </style>

@@ -14,7 +14,10 @@
     {#each $ROUTES as route (route.rt)}
         <label style:border-color={route.rtclr}>
             <input type="checkbox">
-            {route.rtnm} (<code>{route.rtdd}</code>)
+            <span class="route-number">
+                #{route.rtdd}
+            </span>
+            {route.rtnm}
         </label>
     {/each}
 </form>
@@ -32,5 +35,13 @@
 
         cursor: pointer;
         user-select: none;
+    }
+
+    .route-number {
+        margin: 0 4px;
+        font-size: 20px;
+        font-family: monospace;
+        font-weight: bold;
+        opacity: .7;
     }
 </style>

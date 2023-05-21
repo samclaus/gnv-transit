@@ -19,6 +19,14 @@ export function leaflet(
         },
     ).addTo(map);
 
+    // This will get cleaned up when we call map.remove()
+    map.on("locationfound", ev => {
+        L.circleMarker(ev.latlng, {
+            radius: ev.accuracy,
+            color: "#1E88E5",
+        }).addTo(map);
+    });
+
     function onWindowResize(): void {
         map.invalidateSize();
     }

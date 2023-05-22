@@ -119,7 +119,6 @@
 
         opacity: 0;
         transition: opacity 200ms ease-out;
-        will-change: opacity;
     }
 
     .backdrop.visible {
@@ -152,6 +151,6 @@
         contain: inline-size layout style paint;
 
         transform-origin: center;
-        will-change: opacity, transform;
+        isolation: isolate;
     }
 </style>

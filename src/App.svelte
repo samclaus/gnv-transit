@@ -1,13 +1,36 @@
 <script lang="ts">
+    import Map from "./lib/Map.svelte";
     import ModalContainer, { fire } from "./lib/ModalContainer.svelte";
-    import { leaflet } from "./lib/leaflet.action";
+    import Route from "./lib/Route.svelte";
     import FavoriteStopsModal from "./lib/modals/FavoriteStopsModal.svelte";
     import RoutesModal from "./lib/modals/RoutesModal.svelte";
+    import { SELECTED_ROUTES } from "./lib/state/route-selection.state";
 </script>
 
 <main>
+    
+    <!-- The application name, for screen readers (used by visually impaired people) only -->
     <h1 class="sr-only">RTS Bus Tracker</h1>
-    <div class="map" use:leaflet></div>
+
+    <!--
+        <Map> creates a Leaflet map instance imperatively and passes it down to child
+        components via the Svelte context API.
+
+        Each <Route> component, when mounted by Svelte, will grab the map instance from
+        context and start adding its own set of stop markers, a polyline for the route
+        itself, etc., and will update the elements as necessary whenever it refreshes
+        information from the server.
+
+        This should be quite performant because Svelte will only re-mount each <Route>
+        when truly necessary, i.e., the route was not selected and now is selected.
+    -->
+    <Map class="central-map">
+        {#each Array.from($SELECTED_ROUTES) as routeID (routeID)}
+            <Route routeID={routeID} />
+        {/each}
+    </Map>
+
+    <!-- Floating buttons down in the bottom-right corner -->
     <div class="tools">
         <button
             title="Select routes"
@@ -26,6 +49,7 @@
             </svg>
         </button>
     </div>
+
 </main>
 
 <ModalContainer />
@@ -36,10 +60,9 @@
         inset: 0;
     }
 
-    .map {
+    main > :global(.central-map) {
         position: absolute;
         inset: 0;
-        isolation: isolate;
     }
 
     .tools {

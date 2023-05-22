@@ -1,7 +1,7 @@
 <script lang="ts">
     import ModalContainer, { fire } from "./lib/ModalContainer.svelte";
-    import RoutesModal from "./lib/RoutesModal.svelte";
     import { leaflet } from "./lib/leaflet.action";
+    import RoutesModal from "./lib/modals/RoutesModal.svelte";
 </script>
 
 <main>

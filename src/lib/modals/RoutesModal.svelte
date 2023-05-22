@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { complete } from "./ModalContainer.svelte";
-    import { ROUTES } from "./cache";
-    import { SELECTED_ROUTES, selectOnlyRoute, toggleRouteSelected } from "./selected-routes";
+    import { complete } from "../ModalContainer.svelte";
+    import { SELECTED_ROUTES, selectOnlyRoute, toggleRouteSelected } from "../state/route-selection.state";
+    import { ROUTES } from "../state/routes.state";
 </script>
 
 <h2>Select route(s)</h2>

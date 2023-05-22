@@ -1,6 +1,6 @@
 import { writable, type Readable } from "svelte/store";
-import { getRoutes, type RouteInfo } from "./api";
-import { reuseInflight } from "./async-util";
+import { getRoutes, type RouteInfo } from "../api";
+import { reuseInflight } from "../async-util";
 
 const ROUTES_STORAGE_KEY = "BusTime.routes";
 const ROUTES_MUT = writable<RouteInfo[]>(function() {

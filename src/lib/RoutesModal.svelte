@@ -1,19 +1,20 @@
 <script lang="ts">
-    import { ROUTES, refreshRoutes } from "./cache";
-
-    function submit(ev: SubmitEvent): void {
-        ev.preventDefault();
-
-
-    }
+    import { complete } from "./ModalContainer.svelte";
+    import { ROUTES } from "./cache";
+    import { SELECTED_ROUTES, selectOnlyRoute, toggleRouteSelected } from "./selected-routes";
 </script>
 
 <h2>Select route(s)</h2>
-<button on:click={() => refreshRoutes()}>Refresh routes</button>
-<form on:submit>
+<p>
+    <strong>NOTE:</strong> Double-click a route to de-select all others.
+</p>
+<form on:submit|preventDefault={complete}>
     {#each $ROUTES as route (route.rt)}
-        <label style:border-color={route.rtclr}>
-            <input type="checkbox">
+        <label style:border-color={route.rtclr} on:dblclick={() => selectOnlyRoute(route.rt)}>
+            <input
+                type="checkbox"
+                checked={$SELECTED_ROUTES.has(route.rt)}
+                on:input={() => toggleRouteSelected(route.rt)}>
             <span class="route-number">
                 #{route.rtdd}
             </span>

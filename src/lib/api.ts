@@ -183,7 +183,8 @@ export async function getVehiclesByRoute(
         rt: routeIDs.join(","),
         tmres: timeResolution,
     });
-    return (await getBusTimeResponse<GetVehiclesResponse>(url)).vehicle;
+    const { vehicle: vehicles } = await getBusTimeResponse<GetVehiclesResponse>(url);
+    return Array.isArray(vehicles) ? vehicles : []; // ugh
 }
 
 export interface RouteInfo {

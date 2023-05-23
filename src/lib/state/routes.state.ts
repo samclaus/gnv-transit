@@ -25,3 +25,9 @@ export const refreshRoutes = reuseInflight<void>(async () => {
     
     ROUTES_MUT.set(routes);
 });
+
+refreshRoutes().catch(
+    err => {
+        console.error("Failed to refresh available routes:", err);
+    },
+);

@@ -5,6 +5,9 @@
     import FavoriteStopsModal from "./lib/modals/FavoriteStopsModal.svelte";
     import RoutesModal from "./lib/modals/RoutesModal.svelte";
     import { SELECTED_ROUTES } from "./lib/state/route-selection.state";
+    import { ROUTES } from "./lib/state/routes.state";
+
+    $: selectedRoutes = $ROUTES.filter(rt => $SELECTED_ROUTES.has(rt.rt));
 </script>
 
 <main>
@@ -25,8 +28,8 @@
         when truly necessary, i.e., the route was not selected and now is selected.
     -->
     <Map class="central-map">
-        {#each Array.from($SELECTED_ROUTES) as routeID (routeID)}
-            <Route routeID={routeID} />
+        {#each selectedRoutes as rt (rt.rt)}
+            <Route routeID={rt.rt} color={rt.rtclr} />
         {/each}
     </Map>
 

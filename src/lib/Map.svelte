@@ -24,7 +24,10 @@
     setContext(MAP_CTX_KEY, () => map);
 
     onMount((): void => {
-        map = L.map(mapContainer).fitWorld().locate({ setView: true, maxZoom: 16 });
+        map = L.map(mapContainer, {
+            minZoom: 12,
+            maxZoom: 17,
+        }).fitWorld().locate({ setView: true, maxZoom: 16 });
 
         L.tileLayer(
             "https://tile.openstreetmap.org/{z}/{x}/{y}.png",

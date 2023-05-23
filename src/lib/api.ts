@@ -5,7 +5,7 @@ interface Dict<V> {
     [key: string]: V;
 }
 
-function _makeFullURL(
+async function _getResponseObj(
     /**
      * The path relative to the API base URL. Must not begin with a slash.
      */
@@ -15,40 +15,65 @@ function _makeFullURL(
      * strings.
      */
     params: Readonly<Dict<boolean | number | string>>,
-): string {
+): Promise<any> {
     let url = `http://localhost:8080/https://riderts.app/bustime/api/v3/${path}?key=${RTS_API_KEY}&format=json`;
 
     for (const [param, value] of Object.entries(params)) {
         url += `&${param}=${value}`;
     }
 
-    return url;
-}
-
-const _getServerTimeURL = _makeFullURL("gettime", { unixTime: true });
-
-async function getBusTimeResponse<T extends object>(url: string): Promise<T> {
     const res = await fetch(url);
 
     if (!res.ok) {
         throw res;
     }
 
-    // TODO: need proper validation and error handling at every level for this function--no matter
-    // what goes wrong (no connection, malformed response without "bustime-response" field, invalid
-    // JSON, etc. etc.), the user should see extremely clear feedback so they know what to tell me
+    let result: any;
 
-    const { "bustime-response": data } = await res.json();
-
-    if (typeof data.error === "string") {
-        throw new Error(data.error)
+    try {
+        result = await res.json();
+    } catch {
+        throw new Error("server response was not valid JSON");
     }
 
-    return data;
+    if (typeof result !== "object") {
+        throw new Error("server response was not an object");
+    }
+    
+    result = result["bustime-response"];
+
+    if (typeof result !== "object") {
+        throw new Error("server response did not contain 'bustime-response' object");
+    }
+    if (typeof result.error === "string") {
+        throw new Error(result.error);
+    }
+
+    return result;
+}
+
+async function _getArray(
+    /**
+     * The path relative to the API base URL. Must not begin with a slash.
+     */
+    path: string,
+    /**
+     * Query params; please note that these are appended as-is, and should be URL-friendly
+     * strings.
+     */
+    params: Readonly<Dict<boolean | number | string>>,
+    /**
+     * The field of the response object which will contain the array. If this field is not
+     * present on the response object, an empty array will be returned.
+     */
+    field: string,
+): Promise<any[]> {
+    const res = (await _getResponseObj(path, params))[field];
+    return Array.isArray(res) ? res : []; // Need this check because their API is inconsistent
 }
 
 export async function getServerTimeUNIX(): Promise<number> {
-    return (await getBusTimeResponse<{ tm: number; }>(_getServerTimeURL)).tm;
+    return (await _getResponseObj("gettime", { unixTime: true })).tm;
 }
 
 export const enum TransportationMode {
@@ -160,31 +185,28 @@ interface GetVehiclesResponse {
  * Given a set of vehicle IDs, returns the information for those vehicles, such as their
  * current position, destination, and whether they are delayed.
  */
-export async function getVehicles(
+export function getVehicles(
     vehicleIDs: readonly string[],
     timeResolution: "m" | "s" = "m",
 ): Promise<VehicleInfo[]> {
-    const url = _makeFullURL("getvehicles", {
+    return _getArray("getvehicles", {
         vid: vehicleIDs.join(","),
         tmres: timeResolution,
-    });
-    return (await getBusTimeResponse<GetVehiclesResponse>(url)).vehicle;
+    }, "vehicle");
 }
 
 /**
  * Given a set of route IDs, returns the information for the vehicles traveling those
  * routes, such as their current position, destination, and whether they are delayed.
  */
-export async function getVehiclesByRoute(
+export function getVehiclesByRoute(
     routeIDs: readonly string[],
     timeResolution: "m" | "s" = "m",
 ): Promise<VehicleInfo[]> {
-    const url = _makeFullURL("getvehicles", {
+    return _getArray("getvehicles", {
         rt: routeIDs.join(","),
         tmres: timeResolution,
-    });
-    const { vehicle: vehicles } = await getBusTimeResponse<GetVehiclesResponse>(url);
-    return Array.isArray(vehicles) ? vehicles : []; // ugh
+    }, "vehicle");
 }
 
 export interface RouteInfo {
@@ -203,17 +225,11 @@ export interface RouteInfo {
     rtpidatafeed?: string;
 }
 
-const _getRoutesURL = _makeFullURL("getroutes", {});
-
 /**
  * Returns information for every transit route in the system.
  */
-export async function getRoutes(): Promise<RouteInfo[]> {
-    interface GetRoutesResponse {
-        routes: RouteInfo[];
-    }
-
-    return (await getBusTimeResponse<GetRoutesResponse>(_getRoutesURL)).routes;
+export function getRoutes(): Promise<RouteInfo[]> {
+    return _getArray("getroutes", {}, "routes");
 }
 
 export interface DirectionInfo {
@@ -228,13 +244,8 @@ export interface DirectionInfo {
  * 2 directions, generically known as "inbound" and "outbound". The directions will likely
  * have localized names such as "East towards Rosa Parks" and "West towards Santa Fe".
  */
-export async function getDirectionsForRoute(routeID: string): Promise<DirectionInfo[]> {
-    interface GetDirectionsResponse {
-        directions: DirectionInfo[];
-    }
-
-    const url = _makeFullURL("getdirections", { rt: routeID });
-    return (await getBusTimeResponse<GetDirectionsResponse>(url)).directions;
+export function getDirectionsForRoute(routeID: string): Promise<DirectionInfo[]> {
+    return _getArray("getdirections", { rt: routeID }, "directions");
 }
 
 export interface StopInfo {
@@ -260,18 +271,13 @@ export interface StopInfo {
     ada?: boolean;
 }
 
-interface GetStopsResponse {
-    stops: StopInfo[];
-}
-
 /**
  * Given a set of stop IDs, returns the information for those stops, such as their
  * position, any detours that temporarily service them, and whether they are ADA
  * accessible.
  */
-export async function getStops(stopIDs: readonly string[]): Promise<StopInfo[]> {
-    const url = _makeFullURL("getstops", { stpid: stopIDs.join(",") });
-    return (await getBusTimeResponse<GetStopsResponse>(url)).stops;
+export function getStops(stopIDs: readonly string[]): Promise<StopInfo[]> {
+    return _getArray("getstops", { stpid: stopIDs.join(",") }, "stops");
 }
 
 /**
@@ -279,15 +285,14 @@ export async function getStops(stopIDs: readonly string[]): Promise<StopInfo[]> 
  * route, such as their position, any detours that temporarily service them, and
  * whether they are ADA accessible.
  */
-export async function getStopsForRoute(
+export function getStopsForRoute(
     routeID: string,
     directionID: string,
 ): Promise<StopInfo[]> {
-    const url = _makeFullURL("getstops", {
+    return _getArray("getstops", {
         rt: routeID,
         dir: directionID,
-    });
-    return (await getBusTimeResponse<GetStopsResponse>(url)).stops;
+    }, "stops");
 }
 
 export interface PatternInfo {
@@ -342,16 +347,11 @@ export interface PatternPointInfo {
     lon: number;
 }
 
-interface GetPatternsResponse {
-    ptr: PatternInfo[];
-}
-
 /**
  * Given a set of pattern IDs, returns info for those patterns.
  */
-export async function getPatterns(patternIDs: readonly string[]): Promise<PatternInfo[]> {
-    const url = _makeFullURL("getpatterns", { pid: patternIDs.join(",") });
-    return (await getBusTimeResponse<GetPatternsResponse>(url)).ptr;
+export function getPatterns(patternIDs: readonly string[]): Promise<PatternInfo[]> {
+    return _getArray("getpatterns", { pid: patternIDs.join(",") }, "ptr");
 }
 
 /**
@@ -361,11 +361,8 @@ export async function getPatterns(patternIDs: readonly string[]): Promise<Patter
  * “default” patterns for the specified route and all patterns that are currently
  * being executed by at least one vehicle on the specified route.
  */
-export async function getPatternsForRoute(
-    routeID: string,
-): Promise<PatternInfo[]> {
-    const url = _makeFullURL("getpatterns", { rt: routeID });
-    return (await getBusTimeResponse<GetPatternsResponse>(url)).ptr;
+export function getPatternsForRoute(routeID: string): Promise<PatternInfo[]> {
+    return _getArray("getpatterns", { rt: routeID }, "ptr");
 }
 
 /**
@@ -469,31 +466,26 @@ export interface PredictionInfo {
     flagstop: -1 | 0 | 1;
 }
 
-interface GetPredictionsResponse {
-    prd: PredictionInfo[];
-}
-
 /**
  * Get predictions for upcoming arrivals/departures of a set of vehicles.
  */
-export async function getPredictionsForVehicles(
+export function getPredictionsForVehicles(
     vehicleIDs: readonly string[],
     timeResolution: "m" | "s" = "m",
     maxPredictions = vehicleIDs.length * 3,
 ): Promise<PredictionInfo[]> {
-    const url = _makeFullURL("getpredictions", {
+    return _getArray("getpredictions", {
         vid: vehicleIDs.join(","),
         tmres: timeResolution,
         top: maxPredictions,
-    });
-    return (await getBusTimeResponse<GetPredictionsResponse>(url)).prd;
+    }, "prd");
 }
 
 /**
  * Get predictions for upcoming arrivals/departures at a set of stops. Optionally,
  * pass a set of route IDs to only show predictions pertaining to those routes.
  */
-export async function getPredictionsForStops(
+export function getPredictionsForStops(
     stopIDs: readonly string[],
     routeIDs?: readonly string[],
     timeResolution: "m" | "s" = "m",
@@ -511,8 +503,7 @@ export async function getPredictionsForStops(
         params.top = maxPredictions;
     }
 
-    const url = _makeFullURL("getpredictions", params);
-    return (await getBusTimeResponse<GetPredictionsResponse>(url)).prd;
+    return _getArray("getpredictions", params, "prd");
 }
 
 // TODO: service bulletins
@@ -558,14 +549,7 @@ export interface DetourInfo {
  * direction ID to only query detours for a particular direction along
  * the route.
  */
-export async function getDetours(
-    routeID: string,
-    directionID?: string,
-): Promise<DetourInfo[]> {
-    interface GetDetoursResponse {
-        dtrs: DetourInfo[];
-    }
-
+export function getDetours(routeID: string, directionID?: string): Promise<DetourInfo[]> {
     const params: Dict<string> = {
         rt: routeID,
     };
@@ -574,8 +558,7 @@ export async function getDetours(
         params.rtdir = directionID;
     }
 
-    const url = _makeFullURL("getdetours", params);
-    return (await getBusTimeResponse<GetDetoursResponse>(url)).dtrs;
+    return _getArray("getdetours", params, "dtrs");
 }
 
 // TODO: agencies

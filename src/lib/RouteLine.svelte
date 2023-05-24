@@ -14,7 +14,7 @@
         // fill: true,
         // fillColor: color,
         // fillOpacity: 1,
-    }).addTo(map);
+    }).addTo(map).bringToBack(); // Need it to go behind the stops
 
     $: line.setLatLngs(info.pt.map(({ lat, lon }) => [lat, lon]));
     $: line.setStyle({ color });

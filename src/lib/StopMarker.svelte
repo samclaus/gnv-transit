@@ -16,7 +16,7 @@
         fill: true,
         fillColor: color,
         fillOpacity: 1,
-    }).bindTooltip(name).addTo(map);
+    }).bindTooltip(name).addTo(map).bringToFront(); // Need it to go in front of route lines
 
     $: circle.setLatLng([lat, lng]);
     $: circle.setStyle({ fillColor: color });

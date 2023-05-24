@@ -3,16 +3,13 @@
     import "leaflet-rotatedmarker";
     import { getContext, onDestroy } from "svelte";
     import { MAP_CTX_KEY } from "./Map.svelte";
-    import { getDirectionsForRoute, getPatternsForRoute, getStopsForRoute, getVehiclesByRoute, type PatternInfo, type StopInfo } from "./api";
+    import { getDirectionsForRoute, getPatternsForRoute, getStopsForRoute, getVehiclesByRoute, type PatternInfo, type StopInfo, type VehicleInfo } from "./api";
 
-    const BUS_ICON = L.icon({
-        iconUrl: "/bus-icon.svg",
-        iconSize: [24, 48],
-    });
 </script>
 
 <script lang="ts">
-    import RouteLine from "./RouteLine.svelte";
+    import BusMarker from "./BusMarker.svelte";
+import RouteLine from "./RouteLine.svelte";
 import StopMarker from "./StopMarker.svelte";
 
     /** Pretty self-explanatory. */
@@ -22,31 +19,21 @@ import StopMarker from "./StopMarker.svelte";
     const map = getContext<() => L.Map>(MAP_CTX_KEY)();
 
     let component_destroyed = false;
-    let bus_markers: L.Marker[] = [];
+    let patterns: PatternInfo[] = [];
+    let stops: StopInfo[] = [];
+    let vehicles: VehicleInfo[] = [];
 
     function recursiveRefreshInformation(): void {
         if (component_destroyed) {
             return;
         }
 
-        getVehiclesByRoute([routeID]).then(vehicles => {
+        getVehiclesByRoute([routeID]).then(vehiclesFromServer => {
             if (component_destroyed) {
                 return;
             }
 
-            bus_markers.forEach(m => m.remove());
-            bus_markers.length = 0;
-
-            for (const v of vehicles) {
-                bus_markers.push(
-                    L.marker([v.lat, v.lon], {
-                        icon: BUS_ICON,
-                        rotationAngle: v.hdg,
-                        rotationOrigin: "center",
-                    }).addTo(map),
-                );
-            }
-
+            vehicles = vehiclesFromServer;
             setTimeout(recursiveRefreshInformation, 3_000);
         }, console.error);
     }
@@ -63,8 +50,6 @@ import StopMarker from "./StopMarker.svelte";
 
         return result;
     }
-
-    let stops: StopInfo[] = [];
 
     getDirectionsForRoute(routeID).then(
         directions => Promise.all(
@@ -85,8 +70,6 @@ import StopMarker from "./StopMarker.svelte";
         },
     );
 
-    let patterns: PatternInfo[] = [];
-
     getPatternsForRoute(routeID).then(
         patternsFromServer => {
             patterns = patternsFromServer;
@@ -95,8 +78,6 @@ import StopMarker from "./StopMarker.svelte";
 
     onDestroy((): void => {
         component_destroyed = true;
-        bus_markers.forEach(m => m.remove());
-        bus_markers.length = 0;
     });
 </script>
 
@@ -110,4 +91,8 @@ import StopMarker from "./StopMarker.svelte";
         lng={stop.lon}
         name={stop.stpnm}
         {color} />
+{/each}
+
+{#each vehicles as vehicle (vehicle.vid)}
+    <BusMarker info={vehicle} {color} />
 {/each}

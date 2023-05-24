@@ -68,3 +68,8 @@ h4 {
 .placeholder > p {
 
 }
+
+.rts-marker-icon {
+    border: none;
+    background-color: none;
+}

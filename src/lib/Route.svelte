@@ -89,8 +89,7 @@ import StopMarker from "./StopMarker.svelte";
     <StopMarker
         lat={stop.lat}
         lng={stop.lon}
-        name={stop.stpnm}
-        {color} />
+        name={stop.stpnm} />
 {/each}
 
 {#each vehicles as vehicle (vehicle.vid)}

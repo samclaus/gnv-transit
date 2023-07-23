@@ -6,7 +6,6 @@
     export let lat: number;
     export let lng: number;
     export let name: string;
-    export let color: string;
 
     const map = getContext<() => L.Map>(MAP_CTX_KEY)();
     const circle = L.circle([lat, lng], {
@@ -14,12 +13,11 @@
         color: "#000",
         weight: 1,
         fill: true,
-        fillColor: color,
+        fillColor: "#000",
         fillOpacity: 1,
     }).bindTooltip(name).addTo(map).bringToFront(); // Need it to go in front of route lines
 
     $: circle.setLatLng([lat, lng]);
-    $: circle.setStyle({ fillColor: color });
     $: circle.setTooltipContent(name);
 
     onDestroy(() => circle.remove());

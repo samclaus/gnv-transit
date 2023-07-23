@@ -1,22 +1,14 @@
-<script lang="ts" context="module">
-    import * as L from "leaflet";
-    import "leaflet-rotatedmarker";
-    import { getContext, onDestroy } from "svelte";
-    import { MAP_CTX_KEY } from "./Map.svelte";
-    import { getDirectionsForRoute, getPatternsForRoute, getStopsForRoute, getVehiclesByRoute, type PatternInfo, type StopInfo, type VehicleInfo } from "./api";
-
-</script>
-
 <script lang="ts">
+    import "leaflet-rotatedmarker";
+    import { onDestroy } from "svelte";
+    import { getDirectionsForRoute, getPatternsForRoute, getStopsForRoute, getVehiclesByRoute, type PatternInfo, type StopInfo, type VehicleInfo } from "./api";
     import BusMarker from "./BusMarker.svelte";
-import RouteLine from "./RouteLine.svelte";
-import StopMarker from "./StopMarker.svelte";
+    import RouteLine from "./RouteLine.svelte";
+    import StopMarker from "./StopMarker.svelte";
 
     /** Pretty self-explanatory. */
     export let routeID: string;
     export let color: string;
-
-    const map = getContext<() => L.Map>(MAP_CTX_KEY)();
 
     let component_destroyed = false;
     let patterns: PatternInfo[] = [];

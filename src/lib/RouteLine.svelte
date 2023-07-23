@@ -9,6 +9,7 @@
 
     const map = getContext<() => L.Map>(MAP_CTX_KEY)();
     const line = L.polyline(info.pt.map(({ lat, lon }) => [lat, lon]), {
+        noClip: true,
         color,
         // weight: 1,
         // fill: true,

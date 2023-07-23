@@ -27,6 +27,7 @@
         map = L.map(mapContainer, {
             minZoom: 12,
             maxZoom: 17,
+            renderer: L.svg({ padding: 2 }),
         }).fitWorld().locate({ setView: true, maxZoom: 16 });
 
         // L.tileLayer(

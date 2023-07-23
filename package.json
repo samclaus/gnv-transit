@@ -16,6 +16,7 @@
     "@types/leaflet-rotatedmarker": "^0.2.2",
     "leaflet": "^1.9.4",
     "leaflet-rotatedmarker": "^0.2.0",
+    "rollup-plugin-visualizer": "^5.9.2",
     "svelte": "^3.57.0",
     "svelte-check": "^2.10.3",
     "tslib": "^2.5.0",

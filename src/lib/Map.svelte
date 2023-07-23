@@ -27,6 +27,11 @@
         map = L.map(mapContainer, {
             minZoom: 12,
             maxZoom: 17,
+            maxBounds: [
+                [29.76348328222648, -82.09842681884767],
+                [29.520293014753662, -82.59281158447267],
+            ],
+            maxBoundsViscosity: 1,
             renderer: L.svg({ padding: 2 }),
         }).fitWorld().locate({ setView: true, maxZoom: 16 });
 

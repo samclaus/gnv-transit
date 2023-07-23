@@ -58,8 +58,6 @@
     });
 </script>
 
-<svelte:window on:resize={() => map?.invalidateSize()} />
-
 <div class="map {className}" bind:this={mapContainer}>
     {#if map}
 		<slot />

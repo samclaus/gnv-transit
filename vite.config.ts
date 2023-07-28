@@ -14,4 +14,7 @@ export default defineConfig({
             filename: 'analyse.html', // will be saved in project's root
         }),
     ],
+    optimizeDeps: {
+        exclude: ['leaflet-lite'],
+    },
 });

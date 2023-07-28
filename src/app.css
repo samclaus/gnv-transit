@@ -68,3 +68,14 @@ h4 {
 .placeholder > p {
 
 }
+
+.rts-bus-icon {
+    margin-left: -8px;
+    margin-top: -16px;
+}
+
+.rts-bus-icon,
+.rts-bus-icon > svg {
+    width: 16px;
+    height: 32px;
+}

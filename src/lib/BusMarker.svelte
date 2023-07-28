@@ -3,16 +3,11 @@
     import fullBusSVG from "./bus-icon.svg?raw";
 
     function busIcon(): L.Icon {
-        const div = L.DomUtil.create('div', 'leaflet-marker-icon');
+        // TODO: possible to just use the `<svg>` element as the outer icon?
+        const div = L.DomUtil.create('div', 'leaflet-marker-icon rts-bus-icon');
+        
         div.innerHTML = fullBusSVG;
-
-        const svg = div.firstChild as HTMLElement;
-        svg.style.width = '16px';
-        svg.style.height = '32px';
-        div.style.width = '16px';
-        div.style.height = '32px';
         div.style.transformOrigin = 'center';
-        div.style.color = 'orange';
 
         return new L.Icon(
             div,
@@ -34,13 +29,12 @@
     const marker = new L.Marker(
         new L.LatLng(info.lat, info.lon),
         busIcon(),
-        // { rotation: info.hdg },
     );
 
     map.addLayer(marker);
 
     $: marker.setLatLng(new L.LatLng(info.lat, info.lon));
-    // $: marker.setRotation(info.hdg);
+    $: marker.setRotation(info.hdg), console.log("Updated rotation");
     $: marker._icon.style.color = color;
 
     onDestroy(() => map.removeLayer(marker));

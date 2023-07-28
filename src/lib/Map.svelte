@@ -25,9 +25,9 @@
     setContext(MAP_CTX_KEY, () => map);
 
     onMount((): void => {
-        map = new L.Map(mapContainer, new L.SVG({ padding: 2 }), {
+        map = new L.Map(mapContainer, new L.SVG({ padding: 2, pane: 'overlay' }), {
             minZoom: 12,
-            maxZoom: 17,
+            maxZoom: 18,
             maxBounds: new L.LatLngBounds(
                 new L.LatLng(29.76348328222648, -82.09842681884767),
                 new L.LatLng(29.520293014753662, -82.59281158447267),
@@ -45,7 +45,7 @@
         // This will get cleaned up when we call map.remove()
         new L.Locator(map).locate({ setView: true, maxZoom: 16 }).on("locationfound", ev => {
             map.addLayer(
-                new L.Marker(ev.latlng, L.defaultIcon(defaultMarkerURL)),
+                new L.Marker(ev.latlng, L.defaultMarkerIcon(defaultMarkerURL)),
             );
         });
 
@@ -66,7 +66,7 @@
     });
 
     onDestroy((): void => {
-        map?.remove();
+        map?.dispose();
     });
 </script>
 

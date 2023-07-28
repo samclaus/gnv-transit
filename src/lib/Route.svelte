@@ -75,13 +75,13 @@
 {#each patterns as pattern (pattern.pid)}
     <RouteLine info={pattern} {color} />
 {/each}
-
+<!-- 
 {#each stops as stop (stop.stpid)}
     <StopMarker
         lat={stop.lat}
         lng={stop.lon}
         name={stop.stpnm} />
-{/each}
+{/each} -->
 
 {#each vehicles as vehicle (vehicle.vid)}
     <BusMarker info={vehicle} {color} />

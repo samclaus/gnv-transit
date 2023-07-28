@@ -1,21 +1,21 @@
 <script lang="ts" context="module">
     import * as L from "leaflet-lite";
-    import defaultIconURL from "leaflet-lite/assets/marker.svg";
     import fullBusSVG from "./bus-icon.svg?raw";
 
     function busIcon(): L.Icon {
-        const div = document.createElement('div');
+        const div = L.DomUtil.create('div', 'leaflet-marker-icon');
         div.innerHTML = fullBusSVG;
 
         const svg = div.firstChild as HTMLElement;
-        svg.remove();
         svg.style.width = '16px';
         svg.style.height = '32px';
-        svg.style.transformOrigin = 'center';
-        svg.style.color = 'orange';
+        div.style.width = '16px';
+        div.style.height = '32px';
+        div.style.transformOrigin = 'center';
+        div.style.color = 'orange';
 
         return new L.Icon(
-            svg,
+            div,
             new L.Point(16, 32),
             new L.Point(8, 16),
         );

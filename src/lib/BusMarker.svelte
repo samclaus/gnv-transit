@@ -34,7 +34,7 @@
     map.addLayer(marker);
 
     $: marker.setLatLng(new L.LatLng(info.lat, info.lon));
-    $: marker.setRotation(info.hdg), console.log("Updated rotation");
+    $: marker.setRotation(info.hdg);
     $: marker._icon.style.color = color;
 
     onDestroy(() => map.removeLayer(marker));

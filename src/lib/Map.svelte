@@ -3,10 +3,9 @@
 </script>
 
 <script lang="ts">
-    import { onDestroy, onMount, setContext } from "svelte";
     import * as L from "leaflet-lite";
     import "leaflet-lite/styles";
-    import defaultMarkerURL from 'leaflet-lite/assets/marker.svg';
+    import { onDestroy, onMount, setContext } from "svelte";
 
     /**
      * Space-delimited list of classes to add to the map container element.
@@ -18,6 +17,7 @@
     let mapContainer: HTMLDivElement;
     // ...which will then allow us to initialize the map instance.
     let map: L.Map;
+    let locator: L.Locator | undefined;
 
     // We cannot use the value of the map variable directly because it will not be
     // created until onMount() is called, which will happen immediately after this
@@ -25,7 +25,7 @@
     setContext(MAP_CTX_KEY, () => map);
 
     onMount((): void => {
-        map = new L.Map(mapContainer, new L.SVG({ padding: 2, pane: 'overlay' }), {
+        map = new L.Map(mapContainer, new L.SVG({ padding: 2 }), {
             minZoom: 12,
             maxZoom: 18,
             maxBounds: new L.LatLngBounds(
@@ -42,13 +42,6 @@
         new L.Keyboard(map);
         new L.TapHold(map);
 
-        // This will get cleaned up when we call map.remove()
-        new L.Locator(map).locate({ setView: true, maxZoom: 16 }).on("locationfound", ev => {
-            map.addLayer(
-                new L.Marker(ev.latlng, L.defaultMarkerIcon(defaultMarkerURL)),
-            );
-        });
-
         map.addLayer(
             new L.TileLayer(
                 "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
@@ -59,10 +52,6 @@
                 },
             ),
         );
-
-        map.on("click", ev => {
-            console.log(ev.latlng);
-        });
     });
 
     onDestroy((): void => {

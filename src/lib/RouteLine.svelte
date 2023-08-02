@@ -11,6 +11,7 @@
     const line = new L.Polyline(info.pt.map(({ lat, lon }) => new L.LatLng(lat, lon)), {
         noClip: true,
         color,
+        opacity: 0.5,
         // weight: 1,
         // fill: true,
         // fillColor: color,

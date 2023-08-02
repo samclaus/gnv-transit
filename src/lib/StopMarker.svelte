@@ -9,7 +9,7 @@
 
     const map = getContext<() => L.Map>(MAP_CTX_KEY)();
     const circle = new L.Circle(new L.LatLng(lat, lng), {
-        radius: 20,
+        radius: 8,
         color: "#000",
         weight: 1,
         fill: true,

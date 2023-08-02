@@ -114,7 +114,7 @@ export interface VehicleInfo {
     pid: number;
     /** Number of feet (linear) the vehicle has traveled into its current pattern. */
     pdist: number;
-    /** ID the route the vehicle is currently executing. */
+    /** ID of the route the vehicle is currently executing. */
     rt: string;
     /** Name of the vehicle's destination. */
     des: string;

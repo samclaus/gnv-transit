@@ -1,6 +1,7 @@
 <script lang="ts">
     import Map from "./lib/Map.svelte";
     import ModalContainer, { fire } from "./lib/ModalContainer.svelte";
+    import MyLocation from "./lib/MyLocation.svelte";
     import Route from "./lib/Route.svelte";
     import FavoriteStopsModal from "./lib/modals/FavoriteStopsModal.svelte";
     import RoutesModal from "./lib/modals/RoutesModal.svelte";
@@ -8,6 +9,8 @@
     import { ROUTES } from "./lib/state/routes.state";
 
     $: selectedRoutes = $ROUTES.filter(rt => $SELECTED_ROUTES.has(rt.rt));
+
+    let gpsEnabled = false; // TODO: remember this in local storage
 </script>
 
 <main>
@@ -31,16 +34,22 @@
         {#each selectedRoutes as rt (rt.rt)}
             <Route routeID={rt.rt} color={rt.rtclr} />
         {/each}
+
+        {#if gpsEnabled}
+            <MyLocation />
+        {/if}
     </Map>
 
     <!-- Floating buttons down in the bottom-right corner -->
     <div class="tools">
         <button
-            title="Select routes"
-            aria-label="Select routes"
-            on:click={() => fire(RoutesModal, {})}>
+            title="Toggle my location"
+            aria-label="Toggle my location"
+            aria-pressed={gpsEnabled}
+            style:color={gpsEnabled ? "#1E88E5" : "black"}
+            on:click={() => gpsEnabled = !gpsEnabled}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M11,10H5L3,8L5,6H11V3L12,2L13,3V4H19L21,6L19,8H13V10H19L21,12L19,14H13V20A2,2 0 0,1 15,22H9A2,2 0 0,1 11,20V10Z" />
+                <path d="M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z" />
             </svg>
         </button>
         <button
@@ -49,6 +58,14 @@
             on:click={() => fire(FavoriteStopsModal, {})}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22S19 14.2 19 9C19 5.1 15.9 2 12 2M14.5 13L12 11.5L9.5 13L10.2 10.2L8 8.3L10.9 8.1L12 5.4L13.1 8L16 8.3L13.8 10.2L14.5 13Z" />
+            </svg>
+        </button>
+        <button
+            title="Select routes"
+            aria-label="Select routes"
+            on:click={() => fire(RoutesModal, {})}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M11,10H5L3,8L5,6H11V3L12,2L13,3V4H19L21,6L19,8H13V10H19L21,12L19,14H13V20A2,2 0 0,1 15,22H9A2,2 0 0,1 11,20V10Z" />
             </svg>
         </button>
     </div>
@@ -83,6 +100,7 @@
     }
 
     button > svg {
+        fill: currentColor;
         width: 36px;
         height: 36px;
     }

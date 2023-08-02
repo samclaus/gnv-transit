@@ -1,5 +1,4 @@
 <script lang="ts">
-    import "leaflet-rotatedmarker";
     import { onDestroy } from "svelte";
     import { getDirectionsForRoute, getPatternsForRoute, getStopsForRoute, getVehiclesByRoute, type PatternInfo, type StopInfo, type VehicleInfo } from "./api";
     import BusMarker from "./BusMarker.svelte";

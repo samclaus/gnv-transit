@@ -1,24 +1,27 @@
 <script lang="ts">
+    import * as L from "leaflet-lite";
     import { getContext, onDestroy } from "svelte";
     import { MAP_CTX_KEY } from "./Map.svelte";
-    import * as L from "leaflet";
 
     export let lat: number;
     export let lng: number;
     export let name: string;
 
     const map = getContext<() => L.Map>(MAP_CTX_KEY)();
-    const circle = L.circle([lat, lng], {
+    const circle = new L.Circle(new L.LatLng(lat, lng), {
         radius: 20,
         color: "#000",
         weight: 1,
         fill: true,
         fillColor: "#000",
         fillOpacity: 1,
-    }).bindTooltip(name).addTo(map).bringToFront(); // Need it to go in front of route lines
+    });
 
-    $: circle.setLatLng([lat, lng]);
-    $: circle.setTooltipContent(name);
+    map.addLayer(circle);
+    circle.bringToFront(); // Need it to go in front of route lines
 
-    onDestroy(() => circle.remove());
+    $: circle.setLatLng(new L.LatLng(lat, lng));
+    // $: circle.setTooltipContent(name); TODO: tooltips
+
+    onDestroy(() => map.removeLayer(circle));
 </script>

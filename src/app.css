@@ -69,7 +69,17 @@ h4 {
 
 }
 
-.rts-marker-icon {
-    border: none;
-    background-color: none;
+.leaflet-container {
+    background-color: #fcf8f4;
+}
+
+.rts-bus-icon {
+    margin-left: -8px;
+    margin-top: -16px;
+}
+
+.rts-bus-icon,
+.rts-bus-icon > svg {
+    width: 16px;
+    height: 32px;
 }

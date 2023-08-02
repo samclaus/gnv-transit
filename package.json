@@ -12,7 +12,7 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^2.0.3",
     "@tsconfig/svelte": "^4.0.1",
-    "leaflet-lite": "link:../leaflet-lite",
+    "leaflet-lite": "^0.2.0",
     "rollup-plugin-visualizer": "^5.9.2",
     "svelte": "^3.57.0",
     "svelte-check": "^2.10.3",

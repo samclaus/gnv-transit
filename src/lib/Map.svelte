@@ -6,6 +6,8 @@
     import * as L from "leaflet-lite";
     import "leaflet-lite/styles";
     import { onDestroy, onMount, setContext } from "svelte";
+    import { fire } from "./ModalContainer.svelte";
+    import StopPredictionsModal from "./modals/StopPredictionsModal.svelte";
     import { stopsNear } from "./state/stops.state";
 
     /**
@@ -56,11 +58,11 @@
 
         map.on("click", ev => {
             const { lng, lat } = ev.latlng;
+            const nearestStop = stopsNear(lng, lat, 1)[0];
 
-            console.log(
-                "Nearest stops:\n\n" +
-                stopsNear(lng, lat, 1).map(s => `${s.stpnm} (${s.stpid})`).join("\n"),
-            );
+            if (nearestStop) {
+                fire(StopPredictionsModal, { stop: nearestStop });
+            }
         })
     });
 

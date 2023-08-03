@@ -97,7 +97,7 @@
     {#if $current}
         <div class="modal-scroller">
             <dialog open transition:slideScaleFade>
-                <svelte:component this={$current[0]} />
+                <svelte:component this={$current[0]} {...$current[1]} />
             </dialog>
         </div>
     {/if}

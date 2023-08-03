@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onDestroy } from "svelte";
     import { getDirectionsForRoute, getPatternsForRoute, getStopsForRoute, getVehiclesByRoute, type PatternInfo, type StopInfo, type VehicleInfo } from "./api";
+    import { flatten } from "./array-util";
     import BusMarker from "./BusMarker.svelte";
     import RouteLine from "./RouteLine.svelte";
     import StopMarker from "./StopMarker.svelte";
@@ -31,16 +32,6 @@
 
     // Kick it off
     recursiveRefreshInformation();
-
-    function flatten<T>(arr: T[][]): T[] {
-        const result: T[] = [];
-
-        for (const subArr of arr) {
-            result.push(...subArr);
-        }
-
-        return result;
-    }
 
     getDirectionsForRoute(routeID).then(
         directions => Promise.all(

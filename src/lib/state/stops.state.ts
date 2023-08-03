@@ -1,9 +1,9 @@
+import RBush from "rbush";
 import { getStopsForRoute, type StopInfo } from "../api";
 import { flatten } from "../array-util";
 import { reuseInflightKeyed } from "../async-util";
+import knn from "../rbush-knn";
 import { cachedDirections, refreshDirections } from "./direction.state";
-import RBush from "rbush";
-import knn from "rbush-knn";
 
 const STOP_STORAGE_KEY = "BusTime.stops";
 
@@ -16,8 +16,10 @@ const STOPS: Dict<StopInfo> = function() {
             return stops;
         } 
     } catch {
-        return Object.create(null);
+        // Don't care
     }
+
+    return Object.create(null);
 }();
 
 interface StopIndexItem {

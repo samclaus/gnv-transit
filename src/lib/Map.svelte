@@ -57,7 +57,10 @@
         map.on("click", ev => {
             const { lng, lat } = ev.latlng;
 
-            console.log(stopsNear(lng, lat, 3));
+            console.log(
+                "Nearest stops:\n\n" +
+                stopsNear(lng, lat, 1).map(s => `${s.stpnm} (${s.stpid})`).join("\n"),
+            );
         })
     });
 

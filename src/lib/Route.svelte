@@ -1,9 +1,9 @@
 <script lang="ts">
     import { onDestroy } from "svelte";
-    import { getDirectionsForRoute, getPatternsForRoute, getStopsForRoute, getVehiclesByRoute, type PatternInfo, type StopInfo, type VehicleInfo } from "./api";
-    import { flatten } from "./array-util";
+    import { getPatternsForRoute, getVehiclesByRoute, type PatternInfo, type StopInfo, type VehicleInfo } from "./api";
     import BusMarker from "./BusMarker.svelte";
     import RouteLine from "./RouteLine.svelte";
+    import { refreshStops } from "./state/stops.state";
     import StopMarker from "./StopMarker.svelte";
 
     /** Pretty self-explanatory. */
@@ -33,11 +33,7 @@
     // Kick it off
     recursiveRefreshInformation();
 
-    getDirectionsForRoute(routeID).then(
-        directions => Promise.all(
-            directions.map(d => getStopsForRoute(routeID, d.id))
-        ).then(flatten),
-    ).then(
+    refreshStops(routeID).then(
         stopsFromServer => {
             const addedStops = new Set<string>();
 

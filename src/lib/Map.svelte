@@ -6,6 +6,7 @@
     import * as L from "leaflet-lite";
     import "leaflet-lite/styles";
     import { onDestroy, onMount, setContext } from "svelte";
+    import { stopsNear } from "./state/stops.state";
 
     /**
      * Space-delimited list of classes to add to the map container element.
@@ -52,6 +53,12 @@
                 },
             ),
         );
+
+        map.on("click", ev => {
+            const { lng, lat } = ev.latlng;
+
+            console.log(stopsNear(lng, lat, 3));
+        })
     });
 
     onDestroy((): void => {

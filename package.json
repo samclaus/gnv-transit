@@ -15,6 +15,7 @@
     "@types/rbush": "^3.0.0",
     "leaflet-lite": "^0.2.0",
     "rbush": "^3.0.1",
+    "rbush-knn": "^3.0.1",
     "rollup-plugin-visualizer": "^5.9.2",
     "svelte": "^3.57.0",
     "svelte-check": "^2.10.3",

@@ -3,6 +3,7 @@ import { flatten } from "../array-util";
 import { reuseInflightKeyed } from "../async-util";
 import { cachedDirections, refreshDirections } from "./direction.state";
 import RBush from "rbush";
+import knn from "rbush-knn";
 
 const STOP_STORAGE_KEY = "BusTime.stops";
 
@@ -41,7 +42,26 @@ const STOP_SPATIAL_INDEX = new RBush<StopIndexItem>().load(
     Object.values(STOPS).map(stopBounds),
 );
 
-export const refreshStops = reuseInflightKeyed(async routeID => {
+export function stopsNear(lng: number, lat: number, maxStops: number): StopInfo[] {
+    const stops: StopInfo[] = [];
+
+    for (const { stopID } of knn<StopIndexItem>(
+        STOP_SPATIAL_INDEX,
+        lng,
+        lat,
+        maxStops,
+    )) {
+        const stop = STOPS[stopID];
+
+        if (stop) {
+            stops.push(stop);
+        }
+    }
+
+    return stops;
+}
+
+export const refreshStops = reuseInflightKeyed<StopInfo[]>(async routeID => {
     const byDirection: Dict<Promise<StopInfo[]>> = Object.create(null);
 
     for (const dir of cachedDirections(routeID)) {

@@ -20,6 +20,9 @@ devDependencies:
   rbush:
     specifier: ^3.0.1
     version: 3.0.1
+  rbush-knn:
+    specifier: ^3.0.1
+    version: 3.0.1
   rollup-plugin-visualizer:
     specifier: ^5.9.2
     version: 5.9.2
@@ -737,6 +740,12 @@ packages:
     resolution: {integrity: sha512-RKJ22hX8mHe3Y6wH/N3wCM6BWtjaxIyyUIkpHOvfFnxdI4yD4tBXEBKSbriGujF6jnSVkJrffuo6vxACiSSxIw==}
     dev: true
 
+  /rbush-knn@3.0.1:
+    resolution: {integrity: sha512-nuehTm0Q8yR6nvu3XjoWnZVGK5QqqRHNWogRIjBEBcPgsq3pbiuvWuq0/e/1uL43fXNtDUv93kYZDStZonBetQ==}
+    dependencies:
+      tinyqueue: 2.0.3
+    dev: true
+
   /rbush@3.0.1:
     resolution: {integrity: sha512-XRaVO0YecOpEuIvbhbpTrZgoiI6xBlz6hnlr6EHhd+0x9ase6EmeN+hdwwUaJvLcsFFQ8iWVF1GAK1yB0BWi0w==}
     dependencies:
@@ -967,6 +976,10 @@ packages:
   /svelte@3.57.0:
     resolution: {integrity: sha512-WMXEvF+RtAaclw0t3bPDTUe19pplMlfyKDsixbHQYgCWi9+O9VN0kXU1OppzrB9gPAvz4NALuoca2LfW2bOjTQ==}
     engines: {node: '>= 8'}
+    dev: true
+
+  /tinyqueue@2.0.3:
+    resolution: {integrity: sha512-ppJZNDuKGgxzkHihX8v9v9G5f+18gzaTfrukGrq6ueg0lmH4nqVnA2IPG0AEH3jKEk2GRJCUhDoqpoiw3PHLBA==}
     dev: true
 
   /to-regex-range@5.0.1:

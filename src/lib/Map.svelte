@@ -60,6 +60,8 @@
             const { lng, lat } = ev.latlng;
             const nearestStop = stopsNear(lng, lat, 1)[0];
 
+            console.log(nearestStop);
+
             if (nearestStop) {
                 map.setView(ev.latlng, 16);
                 fire(StopPredictionsModal, { stop: nearestStop });

@@ -46,12 +46,13 @@
             title="Toggle my location"
             aria-label="Toggle my location"
             aria-pressed={gpsEnabled}
-            style:color={gpsEnabled ? "#1E88E5" : "black"}
+            class:active={gpsEnabled}
             on:click={() => gpsEnabled = !gpsEnabled}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path d="M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z" />
             </svg>
         </button>
+        <div class="divider" />
         <button
             title="Favorite stops"
             aria-label="Favorite stops"
@@ -60,6 +61,7 @@
                 <path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22S19 14.2 19 9C19 5.1 15.9 2 12 2M14.5 13L12 11.5L9.5 13L10.2 10.2L8 8.3L10.9 8.1L12 5.4L13.1 8L16 8.3L13.8 10.2L14.5 13Z" />
             </svg>
         </button>
+        <div class="divider" />
         <button
             title="Select routes"
             aria-label="Select routes"
@@ -92,16 +94,42 @@
 
         display: flex;
         flex-direction: column;
-        gap: 24px;
     }
 
     button {
-        padding: 8px;
+        padding: 12px;
+
+        border: 1px solid #111;
+        border-top-width: 0;
+        border-bottom-width: 0;
+
+        background-color: #333;
+        color: #ccc;
+        cursor: pointer;
+    }
+
+    button.active {
+        color: #1E88E5;
+    }
+
+    button:first-child {
+        border-top-width: 1px;
+        border-radius: 8px 8px 0 0;
+    }
+
+    button:last-child {
+        border-bottom-width: 1px;
+        border-radius: 0 0 8px 8px;
     }
 
     button > svg {
         fill: currentColor;
         width: 36px;
         height: 36px;
+    }
+
+    .divider {
+        height: 1px;
+        background-color: #999;
     }
 </style>

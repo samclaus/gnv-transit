@@ -35,7 +35,9 @@
                 new L.LatLng(29.76348328222648, -82.09842681884767),
                 new L.LatLng(29.520293014753662, -82.59281158447267),
             ),
-        }).fitWorld();
+            zoom: 12,
+            center: new L.LatLng(29.651957244073873, -82.32673645019533),
+        });
 
         new L.Drag(map, { maxBoundsViscosity: 1 });
         L.enableScrollWheelZoom(map);
@@ -59,8 +61,6 @@
         map.on("click", ev => {
             const { lng, lat } = ev.latlng;
             const nearestStop = stopsNear(lng, lat, 1)[0];
-
-            console.log(nearestStop);
 
             if (nearestStop) {
                 map.setView(ev.latlng, 16);

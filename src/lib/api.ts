@@ -16,10 +16,12 @@ async function _getResponseObj(
      */
     params: Readonly<Dict<boolean | number | string>>,
 ): Promise<any> {
-    let url = `http://localhost:8080/https://riderts.app/bustime/api/v3/${path}?key=${RTS_API_KEY}&format=json`;
+    const query = new URLSearchParams(params as any).toString();
 
-    for (const [param, value] of Object.entries(params)) {
-        url += `&${param}=${value}`;
+    let url = `/${path}`;
+
+    if (query) {
+        url += "?" + query;
     }
 
     const res = await fetch(url);

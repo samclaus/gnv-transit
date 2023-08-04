@@ -26,7 +26,9 @@
                 new L.LatLng(selectedStop.lat, selectedStop.lon),
                 16,
             );
-            show(StopPredictionsModal, { stop: selectedStop }).finally(
+            show(StopPredictionsModal, { stop: selectedStop }).catch(
+                () => {}, // ignore cancelation
+            ).finally(
                 () => {
                     selectedStop = undefined;
                 },

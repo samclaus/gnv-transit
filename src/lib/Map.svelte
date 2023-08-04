@@ -6,9 +6,6 @@
     import * as L from "leaflet-lite";
     import "leaflet-lite/styles";
     import { onDestroy, onMount, setContext } from "svelte";
-    import { fire } from "./ModalContainer.svelte";
-    import StopPredictionsModal from "./modals/StopPredictionsModal.svelte";
-    import { stopsNear } from "./state/stops.state";
 
     /**
      * Space-delimited list of classes to add to the map container element.
@@ -57,19 +54,6 @@
                 },
             ),
         );
-
-        map.on("click", ev => {
-            const { lng, lat } = ev.latlng;
-            const nearestStop = stopsNear(lng, lat, 1)[0];
-
-            if (nearestStop) {
-                map.setView(
-                    new L.LatLng(nearestStop.lat, nearestStop.lon),
-                    16,
-                );
-                fire(StopPredictionsModal, { stop: nearestStop });
-            }
-        })
     });
 
     onDestroy((): void => {

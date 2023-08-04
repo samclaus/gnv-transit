@@ -3,6 +3,7 @@
     import ModalContainer, { fire } from "./lib/ModalContainer.svelte";
     import MyLocation from "./lib/MyLocation.svelte";
     import Route from "./lib/Route.svelte";
+    import SelectedStop from "./lib/SelectedStop.svelte";
     import FavoriteStopsModal from "./lib/modals/FavoriteStopsModal.svelte";
     import RoutesModal from "./lib/modals/RoutesModal.svelte";
     import { SELECTED_ROUTES } from "./lib/state/route-selection.state";
@@ -38,6 +39,8 @@
         {#if gpsEnabled}
             <MyLocation />
         {/if}
+
+        <SelectedStop />
     </Map>
 
     <!-- Floating buttons down in the bottom-right corner -->

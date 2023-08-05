@@ -96,6 +96,8 @@
 
         display: flex;
         flex-direction: column;
+
+        opacity: 0.8;
     }
 
     button {

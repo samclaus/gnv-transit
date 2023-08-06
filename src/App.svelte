@@ -1,4 +1,5 @@
 <script lang="ts">
+    import BottomSheet from "./lib/BottomSheet.svelte";
     import Map from "./lib/Map.svelte";
     import ModalContainer, { fire } from "./lib/ModalContainer.svelte";
     import MyLocation from "./lib/MyLocation.svelte";
@@ -76,6 +77,7 @@
 
 </main>
 
+<BottomSheet />
 <ModalContainer />
 
 <style>

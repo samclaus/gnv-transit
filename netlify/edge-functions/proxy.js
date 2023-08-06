@@ -12,8 +12,6 @@ export default async (req, ctx) => {
     const res = await fetch(btURL);
     const resJSON = await res.text();
 
-    console.log(url.pathname);
-
     return new Response(resJSON);
 }
 

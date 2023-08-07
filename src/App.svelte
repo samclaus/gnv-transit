@@ -15,15 +15,16 @@
     let userToggledGPS = false;
 
     $: selectedRoutes = $ROUTES.filter(rt => $SELECTED_ROUTES.has(rt.rt));
-    $: if (gpsEnabled) {
-        localStorage.setItem(GPS_STORAGE_KEY, "true");
-    } else {
-        localStorage.removeItem(GPS_STORAGE_KEY);
-    }
 
     function toggleGPS(): void {
         userToggledGPS = true;
         gpsEnabled = !gpsEnabled;
+
+        if (gpsEnabled) {
+            localStorage.setItem(GPS_STORAGE_KEY, "true");
+        } else {
+            localStorage.removeItem(GPS_STORAGE_KEY);
+        }
     }
 </script>
 

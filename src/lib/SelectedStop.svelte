@@ -2,8 +2,8 @@
     import * as L from "leaflet-lite";
     import markerImageURL from "leaflet-lite/assets/marker.svg";
     import { getContext, onDestroy } from "svelte";
+    import { show } from "./BottomSheet.svelte";
     import { MAP_CTX_KEY } from "./Map.svelte";
-    import { show } from "./ModalContainer.svelte";
     import type { StopInfo } from "./api";
     import StopPredictionsModal from "./modals/StopPredictionsModal.svelte";
     import { stopsNear } from "./state/stops.state";

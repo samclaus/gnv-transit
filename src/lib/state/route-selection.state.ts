@@ -1,7 +1,7 @@
 import { writable, type Readable } from "svelte/store";
 
 const SELECTED_ROUTES_STORAGE_KEY = "BusTime.route-selection";
-const SELECTED_ROUTES_SET: Set<string> = (function() {
+export const SELECTED_ROUTES_SET: Set<string> = (function() {
     try {
         const selected = JSON.parse(localStorage.getItem(SELECTED_ROUTES_STORAGE_KEY)!);
 

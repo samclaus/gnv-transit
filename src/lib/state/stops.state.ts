@@ -1,9 +1,11 @@
 import RBush from "rbush";
+import { writable } from "svelte/store";
 import { getStopsForRoute, type StopInfo } from "../api";
 import { flatten } from "../array-util";
 import { reuseInflightKeyed } from "../async-util";
 import knn from "../rbush-knn";
 import { cachedDirections, refreshDirections } from "./direction.state";
+import { SELECTED_ROUTES, SELECTED_ROUTES_SET } from "./route-selection.state";
 
 const STOP_STORAGE_KEY = "BusTime.stops";
 
@@ -21,6 +23,28 @@ const STOPS: Dict<StopInfo> = function() {
 
     return Object.create(null);
 }();
+export const STOPS_BY_ROUTE = new Map<string, string[]>();
+export const STOPS_BY_ROUTE$ = writable(STOPS_BY_ROUTE);
+
+export const VISIBLE_STOPS = new Set<string>();
+
+function recomputeVisibleStops(): void {
+    VISIBLE_STOPS.clear();
+
+    for (const routeID of SELECTED_ROUTES_SET) {
+        const stopIDs = STOPS_BY_ROUTE.get(routeID);
+
+        if (stopIDs) {
+            for (const stopID of stopIDs) {
+                VISIBLE_STOPS.add(stopID);
+            }
+        }
+    }
+}
+
+
+SELECTED_ROUTES.subscribe(recomputeVisibleStops);
+STOPS_BY_ROUTE$.subscribe(recomputeVisibleStops);
 
 interface StopIndexItem {
     minX: number;
@@ -52,6 +76,7 @@ export function stopsNear(lng: number, lat: number, maxStops: number): StopInfo[
         lng,
         lat,
         maxStops,
+        item => VISIBLE_STOPS.has(item.stopID),
     )) {
         const stop = STOPS[stopID];
 
@@ -85,7 +110,11 @@ export const refreshStops = reuseInflightKeyed<StopInfo[]>(async routeID => {
         ),
     );
 
+    const idSet = new Set<string>();
+
     for (const stop of stops) {
+        idSet.add(stop.stpid);
+
         const old = STOPS[stop.stpid];
 
         STOPS[stop.stpid] = stop;
@@ -98,6 +127,9 @@ export const refreshStops = reuseInflightKeyed<StopInfo[]>(async routeID => {
             STOP_SPATIAL_INDEX.insert(stopBounds(stop));
         }
     }
+
+    STOPS_BY_ROUTE.set(routeID, [...idSet]);
+    STOPS_BY_ROUTE$.set(STOPS_BY_ROUTE);
 
     try {
         localStorage.setItem(STOP_STORAGE_KEY, JSON.stringify(STOPS));

@@ -134,7 +134,7 @@
         max-width: 100vw;
         height: calc(50vh - 16px);
 
-        padding: 0 12px;
+        padding: 0 8px;
 
         display: flex;
         flex-direction: column;
@@ -142,7 +142,7 @@
 
         background-color: white;
         border: 1px solid rgb(0 0 0 / .12);
-        border-radius: 16px 16px 0 0;
+        border-radius: 12px 12px 0 0;
 
         pointer-events: all;
         contain: inline-size layout style paint;

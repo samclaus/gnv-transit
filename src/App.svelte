@@ -1,7 +1,7 @@
 <script lang="ts">
-    import BottomSheet from "./lib/BottomSheet.svelte";
+    import BottomSheet, { fire } from "./lib/BottomSheet.svelte";
     import Map from "./lib/Map.svelte";
-    import ModalContainer, { fire } from "./lib/ModalContainer.svelte";
+    import ModalContainer from "./lib/ModalContainer.svelte";
     import MyLocation from "./lib/MyLocation.svelte";
     import Route from "./lib/Route.svelte";
     import SelectedStop from "./lib/SelectedStop.svelte";

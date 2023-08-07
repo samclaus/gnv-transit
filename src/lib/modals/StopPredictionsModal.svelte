@@ -117,10 +117,6 @@
         opacity: 0.4;
     }
 
-    p {
-        margin: 1em 0;
-    }
-
     ul {
         padding: 0;
 

@@ -4,24 +4,28 @@
     import { ROUTES } from "../state/routes.state";
 </script>
 
-<h2>Select route(s)</h2>
-<p>
-    <strong>NOTE:</strong> Double-click a route to de-select all others.
-</p>
-<form on:submit|preventDefault={complete}>
-    {#each $ROUTES as route (route.rt)}
-        <label style:border-color={route.rtclr} on:dblclick={() => selectOnlyRoute(route.rt)}>
-            <input
-                type="checkbox"
-                checked={$SELECTED_ROUTES.has(route.rt)}
-                on:input={() => toggleRouteSelected(route.rt)}>
-            <span class="route-number">
-                #{route.rtdd}
-            </span>
-            {route.rtnm}
-        </label>
-    {/each}
-</form>
+<h2 class="sheet-header">
+    Select route(s)
+</h2>
+<div class="sheet-content">
+    <p>
+        <strong>NOTE:</strong> Double-click a route to de-select all others.
+    </p>
+    <form on:submit|preventDefault={complete}>
+        {#each $ROUTES as route (route.rt)}
+            <label style:border-color={route.rtclr} on:dblclick={() => selectOnlyRoute(route.rt)}>
+                <input
+                    type="checkbox"
+                    checked={$SELECTED_ROUTES.has(route.rt)}
+                    on:input={() => toggleRouteSelected(route.rt)}>
+                <span class="route-number">
+                    #{route.rtdd}
+                </span>
+                {route.rtnm}
+            </label>
+        {/each}
+    </form>
+</div>
 
 <style>
     label {

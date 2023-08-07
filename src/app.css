@@ -38,6 +38,10 @@ h4 {
     font-size: 1rem;
 }
 
+p {
+    margin: 1em 0;
+}
+
 /*
     Content which should only be read by a screen reader.
     This class is shamelessly ripped from TailwindCSS.

@@ -1,6 +1,4 @@
 
-const RTS_API_KEY = import.meta.env.VITE_RTS_API_KEY;
-
 interface Dict<V> {
     [key: string]: V;
 }
@@ -483,33 +481,6 @@ export function getPredictionsForVehicles(
     }, "prd");
 }
 
-const mockPredictions: any[] = [{
-    rt: "40",
-    typ: "A",
-    prdctdn: "DUE",
-    dly: true,
-}, {
-    rt: "23",
-    typ: "A",
-    prdctdn: 17,
-    dly: false,
-}, {
-    rt: "43",
-    typ: "A",
-    prdctdn: 18,
-    dly: false,
-}, {
-    rt: "1",
-    typ: "A",
-    prdctdn: 23,
-    dly: true,
-}, {
-    rt: "8",
-    typ: "A",
-    prdctdn: 30,
-    dly: false,
-}];
-
 /**
  * Get predictions for upcoming arrivals/departures at a set of stops. Optionally,
  * pass a set of route IDs to only show predictions pertaining to those routes.
@@ -520,16 +491,6 @@ export function getPredictionsForStops(
     timeResolution: "m" | "s" = "m",
     maxPredictions?: number,
 ): Promise<PredictionInfo[]> {
-    const result: PredictionInfo[] = [];
-
-    for (const pred of mockPredictions) {
-        if (Math.random() > 0.5) {
-            result.push(pred);
-        }
-    }
-
-    return new Promise(resolve => setTimeout(() => resolve(result), 2000));
-
     const params: Dict<string | number> = {
         stpid: stopIDs.join(","),
         tmres: timeResolution,

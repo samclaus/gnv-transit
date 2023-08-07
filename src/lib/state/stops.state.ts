@@ -120,10 +120,13 @@ export const refreshStops = reuseInflightKeyed<StopInfo[]>(async routeID => {
         STOPS[stop.stpid] = stop;
 
         if (
-            old &&
+            !old ||
             (old.lon !== stop.lon || old.lat !== stop.lat)
         ) {
-            STOP_SPATIAL_INDEX.remove(stopBounds(old), (a, b) => a.stopID === b.stopID);
+            if (old) {
+                STOP_SPATIAL_INDEX.remove(stopBounds(old), (a, b) => a.stopID === b.stopID);
+            }
+            
             STOP_SPATIAL_INDEX.insert(stopBounds(stop));
         }
     }

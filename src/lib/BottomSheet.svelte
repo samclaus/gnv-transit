@@ -132,7 +132,8 @@
         margin: 0 auto;
         width: 40rem;
         max-width: 100vw;
-        height: calc(50vh - 16px);
+        height: calc(50vh - 16px); /* fallback */
+        height: calc(50svh - 16px);
 
         padding: 0 8px;
 

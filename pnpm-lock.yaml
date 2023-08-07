@@ -15,8 +15,8 @@ devDependencies:
     specifier: ^3.0.0
     version: 3.0.0
   leaflet-lite:
-    specifier: ^0.2.0
-    version: 0.2.0
+    specifier: ^0.3.0
+    version: 0.3.0
   rbush:
     specifier: ^3.0.1
     version: 3.0.1
@@ -615,8 +615,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /leaflet-lite@0.2.0:
-    resolution: {integrity: sha512-hzDAix1sSCz98HcSWufgsT4AFKNcr15xMMVaD1I46js8rrI1ZPi1WGH0Mlt9XfC7Uglb8nHsktGjUYwSvV+F6A==}
+  /leaflet-lite@0.3.0:
+    resolution: {integrity: sha512-VkheuHI9pXT/zRFj158damS9sugPnO/jwoYocqXnlByqdkS7sHayN3QJk8f+LR3wwUh+6Bv+TrGs6tWyhY9aLw==}
     dev: true
 
   /magic-string@0.25.9:

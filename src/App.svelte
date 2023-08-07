@@ -9,9 +9,22 @@
     import { SELECTED_ROUTES } from "./lib/state/route-selection.state";
     import { ROUTES } from "./lib/state/routes.state";
 
-    $: selectedRoutes = $ROUTES.filter(rt => $SELECTED_ROUTES.has(rt.rt));
+    const GPS_STORAGE_KEY = "gps_enabled";
 
-    let gpsEnabled = false; // TODO: remember this in local storage
+    let gpsEnabled = !!localStorage.getItem(GPS_STORAGE_KEY);
+    let userToggledGPS = false;
+
+    $: selectedRoutes = $ROUTES.filter(rt => $SELECTED_ROUTES.has(rt.rt));
+    $: if (gpsEnabled) {
+        localStorage.setItem(GPS_STORAGE_KEY, "true");
+    } else {
+        localStorage.removeItem(GPS_STORAGE_KEY);
+    }
+
+    function toggleGPS(): void {
+        userToggledGPS = true;
+        gpsEnabled = !gpsEnabled;
+    }
 </script>
 
 <main>
@@ -37,7 +50,7 @@
         {/each}
 
         {#if gpsEnabled}
-            <MyLocation />
+            <MyLocation animateSetView={userToggledGPS} />
         {/if}
 
         <SelectedStop />
@@ -50,7 +63,7 @@
             aria-label="Toggle my location"
             aria-pressed={gpsEnabled}
             class:active={gpsEnabled}
-            on:click={() => gpsEnabled = !gpsEnabled}>
+            on:click={toggleGPS}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path d="M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z" />
             </svg>

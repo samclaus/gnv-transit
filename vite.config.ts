@@ -14,25 +14,25 @@ export default defineConfig({
             brotliSize: true,
             filename: 'analyse.html', // will be saved in project's root
         }),
-        VitePWA({
-            injectRegister: 'inline',
-            registerType: 'autoUpdate',
-            manifest: {
-                background_color: '#fcf8f4',
-                categories: ['transit', 'maps'],
-                description: 'GNV Transit is an app for tracking RTS bus times in Gainesville, FL.',
-                display: 'fullscreen',
-                display_override: ['fullscreen', 'standalone', 'browser'],
-                icons: [{
-                    src: '/logo.svg',
-                    sizes: 'any',
-                }],
-                name: 'GNV Transit',
-                orientation: 'portrait-primary',
-                short_name: 'Transit',
-                theme_color: '#fff',
-            },
-        }),
+        // VitePWA({
+        //     injectRegister: 'inline',
+        //     registerType: 'autoUpdate',
+        //     manifest: {
+        //         background_color: '#fcf8f4',
+        //         categories: ['transit', 'maps'],
+        //         description: 'GNV Transit is an app for tracking RTS bus times in Gainesville, FL.',
+        //         display: 'fullscreen',
+        //         display_override: ['fullscreen', 'standalone', 'browser'],
+        //         icons: [{
+        //             src: '/logo.svg',
+        //             sizes: 'any',
+        //         }],
+        //         name: 'GNV Transit',
+        //         orientation: 'portrait-primary',
+        //         short_name: 'Transit',
+        //         theme_color: '#fff',
+        //     },
+        // }),
     ],
     optimizeDeps: {
         exclude: ['leaflet-lite'],

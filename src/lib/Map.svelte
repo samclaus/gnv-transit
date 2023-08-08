@@ -17,7 +17,6 @@
     let mapContainer: HTMLDivElement;
     // ...which will then allow us to initialize the map instance.
     let map: L.Map;
-    let locator: L.Locator | undefined;
 
     // We cannot use the value of the map variable directly because it will not be
     // created until onMount() is called, which will happen immediately after this

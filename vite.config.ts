@@ -13,7 +13,7 @@ export default defineConfig({
             gzipSize: true,
             brotliSize: true,
             filename: 'analyse.html', // will be saved in project's root
-        }),
+        }) as any,
         // VitePWA({
         //     injectRegister: 'inline',
         //     registerType: 'autoUpdate',
@@ -26,6 +26,9 @@ export default defineConfig({
         //         icons: [{
         //             src: '/logo.svg',
         //             sizes: 'any',
+        //         }, {
+        //             src: '/logo.png',
+        //             sizes: '512x512',
         //         }],
         //         name: 'GNV Transit',
         //         orientation: 'portrait-primary',

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onDestroy } from "svelte";
     import { get } from "svelte/store";
-    import { getPredictionsForStops, type PredictionInfo, type StopInfo } from "../api";
+    import { getPredictionsForStops, PassengerLoad, type PredictionInfo, type StopInfo } from "../api";
     import { SELECTED_ROUTES } from "../state/route-selection.state";
     import { ROUTES, ROUTES_BY_ID } from "../state/routes.state";
 
@@ -102,6 +102,15 @@
                             {#if pred.dly}
                                 <span class="badge error">
                                     Delayed
+                                </span>
+                            {/if}
+                            {#if pred.psgld === PassengerLoad.HalfEmpty}
+                                <span class="badge warn">
+                                    Bus Half-Full
+                                </span>
+                            {:else if pred.psgld === PassengerLoad.Full}
+                                <span class="badge error">
+                                    Bus Full
                                 </span>
                             {/if}
                         </div>

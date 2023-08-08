@@ -71,7 +71,7 @@
         {/if}
     </p>
     {#if refreshErr}
-        <p style="color: #E53935">
+        <p class="fg-error">
             Sorry, an error occurred when refreshing the predictions for this stop. This could be
             because your device is on airplane mode, the RTS servers are having issues, or maybe
             there are too many people using my application and RTS has temporarily disabled my API
@@ -97,8 +97,13 @@
                                 <em>Unknown route</em>
                             {/if}
                         </div>
-                        <div style:color={pred.dly ? 'red' : 'green'}>
-                            {pred.dly ? 'DELAYED' : 'ON TIME'}
+                        <div>
+                            <strong>➔ {pred.des}</strong>
+                            {#if pred.dly}
+                                <span class="badge error">
+                                    Delayed
+                                </span>
+                            {/if}
                         </div>
                     </div>
                     <div class="pred-countdown">
@@ -126,7 +131,7 @@
     li {
         margin: 1em 0;
 
-        padding: 0 8px;
+        padding: 4px 8px;
 
         display: flex;
         align-items: center;

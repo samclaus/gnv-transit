@@ -138,8 +138,6 @@
     }
 
     li {
-        margin: 1em 0;
-
         padding: 4px 8px;
 
         display: flex;

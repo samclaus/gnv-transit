@@ -6,6 +6,7 @@
     import Route from "./lib/Route.svelte";
     import SelectedStop from "./lib/SelectedStop.svelte";
     import RoutesModal from "./lib/modals/RoutesModal.svelte";
+    import AboutSheet from "./lib/sheets/AboutSheet.svelte";
     import { SELECTED_ROUTES } from "./lib/state/route-selection.state";
     import { ROUTES } from "./lib/state/routes.state";
 
@@ -57,8 +58,20 @@
         <SelectedStop />
     </Map>
 
+    <!-- Floating buttons up in the top-right corner -->
+    <div class="tools top">
+        <button
+            title="About this app"
+            aria-label="About this app"
+            on:click={() => fire(AboutSheet, {})}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" />
+            </svg>
+        </button>
+    </div>
+
     <!-- Floating buttons down in the bottom-right corner -->
-    <div class="tools">
+    <div class="tools bottom">
         <button
             title="Toggle my location"
             aria-label="Toggle my location"
@@ -107,21 +120,30 @@
 
     .tools {
         position: absolute;
-        bottom: 24px;
-        right: 24px;
+        right: 24px; /* top/bottom set by another class */
 
         display: flex;
         flex-direction: column;
 
+        border: 1px solid #111;
+        border-radius: 8px;
+
         opacity: 0.8;
+        overflow: hidden;
+    }
+
+    .tools.top {
+        top: 24px;
+    }
+
+    .tools.bottom {
+        bottom: 24px;
     }
 
     button {
         padding: 12px;
 
-        border: 1px solid #111;
-        border-top-width: 0;
-        border-bottom-width: 0;
+        border: none;
 
         background-color: #333;
         color: #ccc;
@@ -130,16 +152,6 @@
 
     button.active {
         color: #1E88E5;
-    }
-
-    button:first-child {
-        border-top-width: 1px;
-        border-radius: 8px 8px 0 0;
-    }
-
-    button:last-child {
-        border-bottom-width: 1px;
-        border-radius: 0 0 8px 8px;
     }
 
     button > svg {

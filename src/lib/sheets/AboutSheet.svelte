@@ -23,15 +23,21 @@
     <h3>Goals</h3>
     <ol>
         <li>
-            <strong>Exceptional performance:</strong> the application should
+            <strong>Exceptional performance:</strong> The application should
             load quickly and not stutter as you use it.
         </li>
         <li>
-            <strong>Intuitive:</strong> no features should be added which bloat
+            <strong>Intuitive:</strong> No features should be added which bloat
             the application or otherwise punish people who don't want to use them.
         </li>
         <li>
-            <strong>Low data usage:</strong> the app uses modern browser
+            <strong>Non-invasive:</strong> The app should not try to do too much,
+            and it will never serve ads or collect information about you. I will
+            not add any sort of telemetry to the app, and all feedback for making
+            changes will take place organically outside of the app.
+        </li>
+        <li>
+            <strong>Low data usage:</strong> The app uses modern browser
             capabilities to cache the application code and map data on your
             device. Map data for all of Gainesville (at several zoom levels)
             consumes maybe 100MB of storage space, which is not very much to store

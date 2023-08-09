@@ -17,22 +17,22 @@
 
     }
 
-    type Modal = [any, any, Deferred<any>];
+    type Modal = [any, any, Deferred<any>, boolean];
 
     const current = writable<Modal | undefined>(undefined);
 
-    export function show<T>(component: any, params: any): Promise<T> {
+    export function show<T>(component: any, params: any, tall = false): Promise<T> {
         // Cancel the current modal, if any
         cancel();
 
         // Now show the new modal and return the deferred result promise
         const d = new Deferred<T>();
-        current.set([component, params, d]);
+        current.set([component, params, d, tall]);
         return d.promise;
     }
 
-    export function fire(component: any, params: any): void {
-        show(component, params).catch(() => {});
+    export function fire(component: any, params: any, tall?: boolean): void {
+        show(component, params, tall).catch(() => {});
     }
 
     export function complete(result?: any): void {
@@ -63,7 +63,7 @@
             easing: cubicOut,
             css: (t, u) => `
                 opacity: ${t};
-                transform: translateY(${75 * u}px);
+                transform: translateY(${100 * u}%);
             `,
         };
     }
@@ -95,7 +95,7 @@
     />
 
     {#if $current}
-        <dialog open transition:slideFade>
+        <dialog class:tall={$current[3]} open transition:slideFade>
             <svelte:component this={$current[0]} {...$current[1]} />
         </dialog>
     {/if}
@@ -148,6 +148,11 @@
         pointer-events: all;
         contain: inline-size layout style paint;
         isolation: isolate;
+    }
+
+    dialog.tall {
+        height: 70vh;
+        height: 80svh;
     }
 
     :global(.sheet-header) {

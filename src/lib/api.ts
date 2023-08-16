@@ -3,6 +3,45 @@ interface Dict<V> {
     [key: string]: V;
 }
 
+/**
+ * An API error means we got an HTTP response from the server (via the `fetch` function),
+ * but it
+ * 
+ * - had an error HTTP status code (such as 4xx or 5xx),
+ * - did not have a readable body (`Response.text()` failed) or body was not valid text,
+ * - did not have a valid JSON body,
+ * - had a JSON body with an unexpected structure/shape,
+ * - or it had a detectable error message as part of the body (BusTime API will still give 200 HTTP status).
+ */
+export class APIError extends Error {
+
+    constructor(
+        /**
+         * Default human-readable message for the error. Suitable for display to users, but
+         * higher-level code should generally override this message to provide more context
+         * as to what the app was trying to accomplish with the request that failed. Also,
+         * only higher-level code can provide i18n, i.e., show a Spanish message for the
+         * error that occurred if the user only speaks Spanish.
+         */
+        message: string,
+
+        readonly type: "body-read-failed" | "invalid-json" | "invalid-shape" | "error-in-body" | "error-status",
+
+        /**
+         * Status code of the HTTP response.
+         */
+        readonly status: number,
+        readonly fullBody: string | undefined,
+    ) {
+        super(message);
+    }
+
+}
+
+function prettyJSON(val: unknown): string {
+    return JSON.stringify(val, undefined, 4);
+}
+
 async function _getResponseObj(
     /**
      * The path relative to the API base URL. Must not begin with a slash.
@@ -24,29 +63,67 @@ async function _getResponseObj(
 
     const res = await fetch(url);
 
-    if (!res.ok) {
-        throw res;
-    }
-
-    let result: any;
+    let resText: string;
 
     try {
-        result = await res.json();
-    } catch {
-        throw new Error("server response was not valid JSON");
+        resText = await res.text();
+    } catch (err) {
+        throw new APIError(
+            `Failed to read HTTP response body: ${err}`,
+            "body-read-failed",
+            res.status,
+            undefined,
+        );
     }
 
-    if (typeof result !== "object") {
-        throw new Error("server response was not an object");
+    let resJSON: any;
+
+    try {
+        resJSON = JSON.parse(resText);
+    } catch {
+        throw new APIError(
+            "HTTP response body was not valid JSON.",
+            "invalid-json",
+            res.status,
+            resText,
+        );
     }
     
-    result = result["bustime-response"];
+    const result = resJSON?.["bustime-response"];
 
     if (typeof result !== "object") {
-        throw new Error("server response did not contain 'bustime-response' object");
+        throw new APIError(
+            "HTTP response was not a JSON object with nested 'bustime-response' object.",
+            "invalid-shape",
+            res.status,
+
+            // We should ensure the JSON is pretty-printed with indentation since the JSON
+            // body that came over the wire is likely (and should be) minified
+            prettyJSON(resJSON),
+        );
     }
+
     if (typeof result.error === "string") {
-        throw new Error(result.error);
+        throw new APIError(
+            result.error,
+            "error-in-body",
+            res.status,
+
+            // We should ensure the JSON is pretty-printed with indentation since the JSON
+            // body that came over the wire is likely (and should be) minified
+            prettyJSON(resJSON),
+        );
+    }
+    if (!res.ok) {
+        throw new APIError(
+            res.statusText,
+            "error-status",
+            res.status,
+
+            // We should ensure the JSON is pretty-printed with indentation since the JSON
+            // body that came over the wire is likely (and should be) minified
+            prettyJSON(resJSON),
+        );
     }
 
     return result;

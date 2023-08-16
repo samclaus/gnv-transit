@@ -4,6 +4,7 @@
     import { getPredictionsForStops, PassengerLoad, type PredictionInfo, type StopInfo } from "../api";
     import { SELECTED_ROUTES } from "../state/route-selection.state";
     import { ROUTES, ROUTES_BY_ID } from "../state/routes.state";
+    import APIError from "../APIError.svelte";
 
     export let stop: StopInfo;
 
@@ -71,14 +72,7 @@
         {/if}
     </p>
     {#if refreshErr}
-        <p class="fg-error">
-            Sorry, an error occurred when refreshing the predictions for this stop. This could be
-            because your device is on airplane mode, the RTS servers are having issues, or maybe
-            there are too many people using my application and RTS has temporarily disabled my API
-            access, etc. In a future update, I will show you detailed information about the error
-            so that you can screenshot and email it to me! (Or, of course, give an explanation of
-            why the error is not something I can fix.)
-        </p>
+        <APIError title="Failed to refresh predictions" err={refreshErr} />
     {/if}
     <!-- TODO: show refresh error -->
     {#if predictions.length > 0}
@@ -121,8 +115,12 @@
                 </li>
             {/each}
         </ul>
-    {:else if !refreshing}
-        <p>No predictions available at this time for your selected routes.</p>
+    {:else if !refreshing && !refreshErr}
+        <p>
+            No predictions available at this time for your selected routes. Please note
+            that sometimes RTS buses stop reporting their GPS coordinates, and that
+            cripples the server's ability to make predictions.
+        </p>
     {/if}
 </div>
 

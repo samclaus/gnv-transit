@@ -22,10 +22,20 @@ const ROUTES_MUT = writable<RouteInfo[]>(function() {
 }());
 
 export const ROUTES: Readable<readonly RouteInfo[]> = ROUTES_MUT;
+export const ROUTES_REFRESH_ERR = writable<unknown>(undefined);
 export const ROUTES_BY_ID: ReadonlyMap<string, RouteInfo> = _ROUTES_BY_ID;
 
 export const refreshRoutes = reuseInflight<void>(async () => {
-    const routes = await getRoutes();
+    const routes = await getRoutes().then(
+        routes => {
+            ROUTES_REFRESH_ERR.set(undefined);
+            return routes;
+        },
+        err => {
+            ROUTES_REFRESH_ERR.set(err);
+            throw err;
+        },
+    );
 
     try {
         localStorage.setItem(ROUTES_STORAGE_KEY, JSON.stringify(routes));

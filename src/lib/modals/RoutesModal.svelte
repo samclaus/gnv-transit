@@ -1,13 +1,17 @@
 <script lang="ts">
+    import APIError from "../APIError.svelte";
     import { complete } from "../ModalContainer.svelte";
     import { SELECTED_ROUTES, selectOnlyRoute, toggleRouteSelected } from "../state/route-selection.state";
-    import { ROUTES } from "../state/routes.state";
+    import { ROUTES, ROUTES_REFRESH_ERR } from "../state/routes.state";
 </script>
 
 <h2 class="sheet-header">
     Select route(s)
 </h2>
 <div class="sheet-content">
+    {#if $ROUTES_REFRESH_ERR}
+        <APIError title="Failed to refresh routes" err={$ROUTES_REFRESH_ERR} />
+    {/if}
     <p>
         <strong>NOTE:</strong> Double-click a route to de-select all others.
     </p>

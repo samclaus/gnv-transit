@@ -52,5 +52,7 @@
         background-color: #CFD8DC;
         border: 1px solid #607D8B;
         border-radius: 6px;
+
+        overflow-x: auto;
     }
 </style>

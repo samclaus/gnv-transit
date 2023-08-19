@@ -39,6 +39,8 @@
 
 <style>
     aside {
+        margin: 1em 0;
+
         padding: 8px;
 
         background-color: rgb(229 57 53 / .12);

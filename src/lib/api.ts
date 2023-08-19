@@ -103,9 +103,17 @@ async function _getResponseObj(
         );
     }
 
-    if (typeof result.error === "string") {
+    const err = result.error;
+
+    if (err) {
         throw new APIError(
-            result.error,
+            typeof err === "string"
+                ? err
+                : (
+                    err.msg ||
+                    err[0]?.msg ||
+                    "(Unknown error structure. Please refer to full response body.)"
+                ),
             "error-in-body",
             res.status,
 

@@ -583,7 +583,18 @@ export function getPredictionsForStops(
         params.top = maxPredictions;
     }
 
-    return _getArray("getpredictions", params, "prd");
+    return _getArray("getpredictions", params, "prd").catch(
+        err => {
+            if (err instanceof APIError && /no service scheduled/i.test(err.message)) {
+                // Ignore silly "No service scheduled" errors and just return an
+                // empty array of predictions like the server should have!
+                return [];
+            }
+
+            // Otherwise, re-throw the error
+            throw err;
+        },
+    );
 }
 
 // TODO: service bulletins

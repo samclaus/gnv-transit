@@ -261,11 +261,6 @@ export interface VehicleInfo {
     stsd?: string;
 }
 
-interface GetVehiclesResponse {
-    /** Yes, it makes no sense that they named the field like a singular vehicle. */
-    vehicle: VehicleInfo[];
-}
-
 /**
  * Given a set of vehicle IDs, returns the information for those vehicles, such as their
  * current position, destination, and whether they are delayed.

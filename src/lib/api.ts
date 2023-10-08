@@ -52,6 +52,10 @@ async function _getResponseObj(
      * strings.
      */
     params: Readonly<Dict<boolean | number | string>>,
+    /**
+     * Callback to determine what API errors to ignore.
+     */
+    ignoreErrFn?: (err: any) => boolean,
 ): Promise<any> {
     const query = new URLSearchParams(params as any).toString();
 
@@ -103,24 +107,42 @@ async function _getResponseObj(
         );
     }
 
-    const err = result.error;
+    let errors = result.error;
 
-    if (err) {
-        throw new APIError(
-            typeof err === "string"
-                ? err
-                : (
-                    err.msg ||
-                    err[0]?.msg ||
-                    "(Unknown error structure. Please refer to full response body.)"
-                ),
-            "error-in-body",
-            res.status,
+    if (errors) {
+        if (!Array.isArray(errors)) {
+            errors = [errors];
+        }
+        if (ignoreErrFn) {
+            errors = errors.filter((err: any) => {
+                try {
+                    return !ignoreErrFn(err);
+                } catch {}
 
-            // We should ensure the JSON is pretty-printed with indentation since the JSON
-            // body that came over the wire is likely (and should be) minified
-            prettyJSON(resJSON),
-        );
+                return true;
+            });
+        }
+
+        // TODO: better way to handle multiple errors in the UI? Right now we will just
+        // try to propagate the message from the first error that was encountered
+        const firstErr = errors[0];
+
+        if (firstErr) {
+            throw new APIError(
+                typeof firstErr === "string"
+                    ? firstErr
+                    : (
+                        firstErr.msg ||
+                        "(Unknown error structure. Please refer to full response body.)"
+                    ),
+                "error-in-body",
+                res.status,
+
+                // We should ensure the JSON is pretty-printed with indentation since the JSON
+                // body that came over the wire is likely (and should be) minified
+                prettyJSON(resJSON),
+            );
+        }
     }
     if (!res.ok) {
         throw new APIError(
@@ -152,8 +174,12 @@ async function _getArray(
      * present on the response object, an empty array will be returned.
      */
     field: string,
+    /**
+     * Callback to determine what API errors to ignore.
+     */
+    ignoreErrFn?: (err: any) => boolean,
 ): Promise<any[]> {
-    const res = (await _getResponseObj(path, params))[field];
+    const res = (await _getResponseObj(path, params, ignoreErrFn))[field];
     return Array.isArray(res) ? res : []; // Need this check because their API is inconsistent
 }
 
@@ -583,16 +609,37 @@ export function getPredictionsForStops(
         params.top = maxPredictions;
     }
 
-    return _getArray("getpredictions", params, "prd").catch(
+    return _getArray(
+        "getpredictions",
+        params,
+        "prd",
         err => {
-            if (err instanceof APIError && /no service scheduled/i.test(err.message)) {
-                // Ignore silly "No service scheduled" errors and just return an
-                // empty array of predictions like the server should have!
-                return [];
-            }
+            const msg = err?.msg;
 
-            // Otherwise, re-throw the error
-            throw err;
+            return (
+                // When multiple routes are passed to the server, it may return
+                // predictions for the routes that service the stop, but it will
+                // send back errors for any routes that do not service the stop.
+                //
+                // We want to ignore those errors because the user can already see
+                // which routes touch the stop, and they just want to know if there
+                // are ANY relevant predictions.
+                /no data found for parameter/i.test(msg) ||
+
+                // It seems the server will give us this error when a route DOES have
+                // service scheduled to the stop, but the next arrival time is too
+                // far in the future (like >45 min) and it doesn't want to provide
+                // inaccurate predictions
+                //
+                // TODO: report this in the UI on a per-route basis, much like I am
+                // thinking for the "No service scheduled" errors below?
+                /no arrival times/i.test(msg) ||
+
+                // TODO: May want to convert these errors to information so the user
+                // can see which routes definitely do not have service scheduled to
+                // the stop.
+                /no service scheduled/i.test(msg)
+            );
         },
     );
 }

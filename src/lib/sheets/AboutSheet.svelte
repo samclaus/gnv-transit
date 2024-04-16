@@ -76,8 +76,8 @@
         </li>
     </ul>
     <p class="footer">
-        Made in Gainesville by <a href="https://samcla.us">Sam Claus</a>. Logo designed
-        by <a href="https://kaleya.li">Kaley Ali</a>.
+        Made with ❤️ in Gainesville by <a href="https://samcla.us">Sam Claus</a> and
+        <a href="https://kaleya.li">Kaley Ali</a>.
     </p>
 </div>
 
